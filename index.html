@@ -10,7 +10,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- PDF.js for client-side PDF document parsing -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <!-- Google Fonts: Inter, Newsreader (Editorial Serif Italic), & JetBrains Mono -->
+  <!-- Google Fonts: Inter, Newsreader, & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,500;1,6..72,600&display=swap" rel="stylesheet">
@@ -151,7 +151,6 @@
       touch-action: manipulation;
     }
 
-    /* Prevent mobile browser zoom on form focus */
     @media (max-width: 768px) {
       input, select, textarea {
         font-size: 16px !important;
@@ -182,6 +181,13 @@
     .theme-subcard {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
+    }
+
+    @media (max-width: 639px) {
+      #nav-actions-panel {
+        background-color: var(--bg-surface);
+        border-color: var(--border-color);
+      }
     }
 
     .eliminated-option {
@@ -223,67 +229,83 @@
   <div id="toast-container" class="fixed top-4 sm:top-auto sm:bottom-6 left-4 right-4 sm:left-auto sm:right-6 z-50 flex flex-col gap-2 pointer-events-none max-w-sm sm:w-full mx-auto sm:mx-0"></div>
 
   <!-- Main Navigation Header -->
-  <header class="w-full border-b border-white/10 bg-slate-950/60 backdrop-blur-md sticky top-0 z-40 transition-colors">
-    <div class="max-w-6xl mx-auto px-3 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-2">
-      <!-- App Identity -->
-      <div class="flex items-center gap-2 sm:gap-3 cursor-pointer select-none shrink-0" id="nav-brand-btn">
-        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-brand-700 via-brand-600 to-brand-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20 shrink-0">
-          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-          </svg>
-        </div>
-        <div>
-          <div class="flex items-center gap-1.5">
-            <h1 class="font-display font-extrabold text-sm sm:text-base tracking-tight leading-none text-white">iReviewer</h1>
-            <span id="active-mode-badge" class="px-1.5 py-0.2 sm:px-2 sm:py-0.5 text-[9px] sm:text-[10px] font-mono font-semibold uppercase rounded bg-brand-500/15 text-brand-300 border border-brand-500/30">Classic</span>
+  <header class="w-full border-b border-white/10 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 relative">
+      <div class="h-14 sm:h-16 flex items-center justify-between gap-3">
+        
+        <!-- App Identity (Simplified, No Book Logo) -->
+        <div class="flex items-center cursor-pointer select-none shrink-0" id="nav-brand-btn">
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="font-display font-black text-lg sm:text-xl tracking-tight leading-none text-white">iReviewer</h1>
+              <span id="active-mode-badge" class="px-2 py-0.5 text-[9px] sm:text-[10px] font-mono font-semibold uppercase rounded bg-brand-500/15 text-brand-300 border border-brand-500/30">Classic</span>
+            </div>
+            <p class="text-[10px] sm:text-[11px] text-slate-400 font-medium">Reviewer &amp; Quiz Maker</p>
           </div>
-          <p class="text-[10px] sm:text-[11px] text-slate-400 font-medium hidden xs:block">Reviewer &amp; Quiz Maker</p>
         </div>
-      </div>
 
-      <!-- Action Group -->
-      <div class="flex items-center gap-1.5 sm:gap-2">
-        <!-- PDF Reviewer Trigger -->
-        <button id="open-pdf-btn" class="min-h-[36px] px-2 sm:px-3 py-1.5 rounded-xl bg-brand-600/15 hover:bg-brand-600/25 active:scale-95 border border-brand-500/30 text-brand-300 text-xs font-semibold flex items-center gap-1.5 transition-all" title="Upload PDF">
-          <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        <!-- 3-Bars Hamburger Menu Toggle Button (Mobile Only) -->
+        <button id="mobile-menu-btn" type="button" class="sm:hidden p-2.5 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 text-slate-300 hover:text-white transition-all flex items-center justify-center min-w-[42px] min-h-[42px]" aria-label="Toggle navigation menu">
+          <!-- 3 Bars Icon -->
+          <svg id="hamburger-icon" class="w-5 h-5 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
-          <span class="hidden md:inline">PDF</span>
-        </button>
-
-        <!-- Custom Deck Builder Button -->
-        <button id="open-builder-btn" class="min-h-[36px] p-2 sm:px-3 sm:py-1.5 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all" title="Deck Editor">
-          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-          </svg>
-          <span class="hidden md:inline">Editor</span>
-        </button>
-
-        <!-- Achievements Button -->
-        <button id="open-achievements-btn" class="min-h-[36px] p-2 sm:px-2.5 sm:py-1.5 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 text-slate-300 hover:text-brand-300 text-xs font-semibold flex items-center gap-1 transition-all" title="Achievements">
-          <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-          </svg>
-          <span id="badges-unlocked-pill" class="px-1 py-0.2 rounded-full bg-brand-500/15 text-brand-300 font-mono text-[9px] sm:text-[10px]">0/8</span>
-        </button>
-
-        <!-- Theme Selector -->
-        <select id="theme-selector" class="min-h-[36px] px-2 sm:px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-xs font-semibold cursor-pointer outline-none focus:ring-2 focus:ring-brand-500 max-w-[85px] sm:max-w-none">
-          <option value="violet" class="bg-stone-900 text-white">Animo Dark</option>
-          <option value="oled" class="bg-black text-white">Pure OLED</option>
-          <option value="arcade" class="bg-stone-950 text-emerald-400">Emerald</option>
-          <option value="light" class="bg-slate-100 text-slate-900">Light</option>
-        </select>
-
-        <!-- Sound Synthesizer Toggle -->
-        <button id="sound-toggle-btn" class="min-h-[36px] min-w-[36px] p-2 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 text-slate-300 hover:text-white transition-colors flex items-center justify-center" title="Toggle Audio FX">
-          <svg id="sound-on-icon" class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-          </svg>
-          <svg id="sound-off-icon" class="w-4 h-4 hidden text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zM17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+          <!-- Close (X) Icon -->
+          <svg id="close-menu-icon" class="w-5 h-5 text-slate-200 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
+
+        <!-- Navigation Action Items (Desktop: Row / Mobile: Collapsible Dropdown) -->
+        <div id="nav-actions-panel" class="hidden sm:flex sm:flex-row sm:items-center sm:gap-2 sm:static sm:w-auto sm:bg-transparent sm:border-0 sm:p-0 sm:shadow-none absolute top-full left-0 w-full border-b p-4 flex-col gap-2.5 shadow-2xl z-50 animate-pop">
+          <!-- PDF Reviewer Trigger -->
+          <button id="open-pdf-btn" class="w-full sm:w-auto min-h-[40px] sm:min-h-[36px] px-3 py-2 sm:py-1.5 rounded-xl bg-brand-600/15 hover:bg-brand-600/25 active:scale-95 border border-brand-500/30 text-brand-300 text-xs font-semibold flex items-center justify-center sm:justify-start gap-2 transition-all">
+            <svg class="w-4 h-4 text-brand-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <span>PDF Reviewer</span>
+          </button>
+
+          <!-- Custom Deck Builder Button -->
+          <button id="open-builder-btn" class="w-full sm:w-auto min-h-[40px] sm:min-h-[36px] px-3 py-2 sm:py-1.5 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 text-slate-300 hover:text-white text-xs font-semibold flex items-center justify-center sm:justify-start gap-2 transition-all">
+            <svg class="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            <span>Deck Editor</span>
+          </button>
+
+          <!-- Achievements Button -->
+          <button id="open-achievements-btn" class="w-full sm:w-auto min-h-[40px] sm:min-h-[36px] px-3 py-2 sm:py-1.5 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 text-slate-300 hover:text-brand-300 text-xs font-semibold flex items-center justify-center sm:justify-start gap-2 transition-all">
+            <svg class="w-4 h-4 text-brand-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            </svg>
+            <span>Badges</span>
+            <span id="badges-unlocked-pill" class="px-1.5 py-0.5 rounded-full bg-brand-500/15 text-brand-300 font-mono text-[10px]">0/8</span>
+          </button>
+
+          <!-- Theme & Audio Controls -->
+          <div class="flex items-center gap-2 w-full sm:w-auto pt-1.5 sm:pt-0 border-t sm:border-t-0 border-white/10">
+            <!-- Theme Selector -->
+            <select id="theme-selector" class="flex-1 sm:flex-initial min-h-[40px] sm:min-h-[36px] px-3 py-2 sm:py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-xs font-semibold cursor-pointer outline-none focus:ring-2 focus:ring-brand-500">
+              <option value="violet" class="bg-stone-900 text-white">Animo Dark</option>
+              <option value="oled" class="bg-black text-white">Pure OLED</option>
+              <option value="arcade" class="bg-stone-950 text-emerald-400">Emerald Glow</option>
+              <option value="light" class="bg-slate-100 text-slate-900">Animo Light</option>
+            </select>
+
+            <!-- Sound Synthesizer Toggle -->
+            <button id="sound-toggle-btn" class="min-h-[40px] sm:min-h-[36px] px-3 sm:px-2.5 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 text-slate-300 hover:text-white transition-colors flex items-center justify-center gap-2 flex-1 sm:flex-initial" title="Toggle Audio FX">
+              <svg id="sound-on-icon" class="w-4 h-4 text-brand-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+              </svg>
+              <svg id="sound-off-icon" class="w-4 h-4 hidden text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zM17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+              </svg>
+              <span class="sm:hidden text-xs font-semibold">Sound FX</span>
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
   </header>
@@ -573,7 +595,7 @@
         <div class="flex flex-col items-center justify-center mb-6 sm:mb-8">
           <div class="relative w-32 h-32 sm:w-36 sm:h-36 flex items-center justify-center">
             <svg class="w-32 h-32 sm:w-36 sm:h-36 -rotate-90" viewBox="0 0 36 36">
-              <path class="text-white/10" stroke="currentColor" stroke-width="3.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <path class="text-white/10" stroke-currentColor" stroke-width="3.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
               <path id="results-radial-circle" class="text-brand-400 transition-all duration-1000 ease-out" stroke="currentColor" stroke-dasharray="100, 100" stroke-dashoffset="100" stroke-linecap="round" stroke-width="3.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
             </svg>
             <div class="absolute flex flex-col items-center">
@@ -833,7 +855,6 @@
   </div>
 
   <script>
-    // Initialize PDF.js worker
     if (window.pdfjsLib) {
       pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     }
@@ -977,7 +998,7 @@
       }
     ];
 
-    // Synthesizer Audio Engine with Mobile / iOS AudioContext Unlocking
+    // Audio Engine with iOS Unlock
     const AudioEngine = (() => {
       let audioCtx = null;
       let soundEnabled = true;
@@ -1101,7 +1122,7 @@
       };
     })();
 
-    // Lightweight Confetti Particles
+    // Confetti System
     const ConfettiSystem = (() => {
       const canvas = document.getElementById('confetti-canvas');
       const ctx = canvas.getContext('2d');
@@ -1201,15 +1222,13 @@
       }
     };
 
-    // PDF Extraction & Heuristic Reviewer Generator
+    // PDF Reviewer Engine
     const PDFReviewerEngine = {
       currentPDFQuestions: [],
       currentPDFConcepts: [],
 
       async processFile(file) {
-        if (!window.pdfjsLib) {
-          throw new Error('PDF.js library could not be loaded.');
-        }
+        if (!window.pdfjsLib) throw new Error('PDF.js library could not be loaded.');
 
         const arrayBuffer = await file.arrayBuffer();
         const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
@@ -1489,6 +1508,11 @@
       achievementsModal: document.getElementById('achievements-modal'),
       pdfModal: document.getElementById('pdf-modal'),
 
+      // Navigation & Header DOM
+      mobileMenuBtn: document.getElementById('mobile-menu-btn'),
+      navActionsPanel: document.getElementById('nav-actions-panel'),
+      hamburgerIcon: document.getElementById('hamburger-icon'),
+      closeMenuIcon: document.getElementById('close-menu-icon'),
       themeSelector: document.getElementById('theme-selector'),
       soundToggleBtn: document.getElementById('sound-toggle-btn'),
       soundOnIcon: document.getElementById('sound-on-icon'),
@@ -1575,6 +1599,27 @@
       builderImportBtn: document.getElementById('builder-import-btn'),
       builderClearBtn: document.getElementById('builder-clear-btn')
     };
+
+    function closeMobileMenu() {
+      if (!DOM.navActionsPanel) return;
+      DOM.navActionsPanel.classList.add('hidden');
+      DOM.navActionsPanel.classList.remove('flex');
+      DOM.hamburgerIcon.classList.remove('hidden');
+      DOM.closeMenuIcon.classList.add('hidden');
+    }
+
+    function toggleMobileMenu() {
+      if (!DOM.navActionsPanel) return;
+      const isHidden = DOM.navActionsPanel.classList.contains('hidden');
+      if (isHidden) {
+        DOM.navActionsPanel.classList.remove('hidden');
+        DOM.navActionsPanel.classList.add('flex');
+        DOM.hamburgerIcon.classList.add('hidden');
+        DOM.closeMenuIcon.classList.remove('hidden');
+      } else {
+        closeMobileMenu();
+      }
+    }
 
     const QuizTimer = {
       startQuestionTimer() {
@@ -2064,6 +2109,7 @@ Max Streak: ${ArenaState.maxStreak} | Total Points: ${ArenaState.totalPoints} pt
 
     function startArenaGame(overrideDeck = null) {
       AudioEngine.playClick();
+      closeMobileMenu();
       ArenaState.reset();
       ArenaState.timerEnabled = DOM.timerToggleInput.checked;
       ArenaState.shuffleEnabled = DOM.shuffleToggleInput.checked;
@@ -2126,9 +2172,24 @@ Max Streak: ${ArenaState.maxStreak} | Total Points: ${ArenaState.totalPoints} pt
     }
 
     function setupEventListeners() {
-      // Audio unlocking for iOS/iPadOS Safari touch interactions
       ['click', 'touchstart', 'pointerdown'].forEach(evt => {
         window.addEventListener(evt, () => AudioEngine.unlock(), { once: true, passive: true });
+      });
+
+      // Mobile Menu Hamburger Toggle
+      DOM.mobileMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        AudioEngine.playClick();
+        toggleMobileMenu();
+      });
+
+      // Close mobile menu when tapping anywhere outside
+      document.addEventListener('click', (e) => {
+        if (!DOM.navActionsPanel.classList.contains('hidden') && 
+            !DOM.navActionsPanel.contains(e.target) && 
+            !DOM.mobileMenuBtn.contains(e.target)) {
+          closeMobileMenu();
+        }
       });
 
       // Mode selector
@@ -2211,6 +2272,7 @@ Max Streak: ${ArenaState.maxStreak} | Total Points: ${ArenaState.totalPoints} pt
 
       // Modals
       document.getElementById('open-achievements-btn').addEventListener('click', () => {
+        closeMobileMenu();
         AchievementsManager.renderModal();
         DOM.achievementsModal.classList.remove('hidden');
         DOM.achievementsModal.classList.add('flex');
@@ -2221,6 +2283,7 @@ Max Streak: ${ArenaState.maxStreak} | Total Points: ${ArenaState.totalPoints} pt
       });
 
       document.getElementById('open-builder-btn').addEventListener('click', () => {
+        closeMobileMenu();
         DOM.builderJsonArea.value = JSON.stringify(CustomDeckManager.getDeck(), null, 2);
         CustomDeckManager.updateCount();
         DOM.builderModal.classList.remove('hidden');
@@ -2233,6 +2296,7 @@ Max Streak: ${ArenaState.maxStreak} | Total Points: ${ArenaState.totalPoints} pt
 
       // PDF Reviewer Listeners
       const openPDFModal = () => {
+        closeMobileMenu();
         DOM.pdfModal.classList.remove('hidden');
         DOM.pdfModal.classList.add('flex');
       };
@@ -2411,6 +2475,7 @@ Max Streak: ${ArenaState.maxStreak} | Total Points: ${ArenaState.totalPoints} pt
       });
 
       DOM.navBrandBtn.addEventListener('click', () => {
+        closeMobileMenu();
         if (!DOM.quizView.classList.contains('hidden')) {
           DOM.quizView.classList.add('hidden');
           DOM.resultsView.classList.add('hidden');
@@ -2419,7 +2484,7 @@ Max Streak: ${ArenaState.maxStreak} | Total Points: ${ArenaState.totalPoints} pt
         }
       });
 
-      // Keyboard Controls for Hardware Keyboards (e.g. iPad Magic Keyboard)
+      // Keyboard Controls
       window.addEventListener('keydown', (e) => {
         if (DOM.quizView.classList.contains('hidden')) return;
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
