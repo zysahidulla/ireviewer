@@ -1,0 +1,2469 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>iReviewer</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- PDF.js for client-side PDF document parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <!-- Google Fonts: Inter, Newsreader (Editorial Serif Italic), & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,500;1,6..72,600&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            display: ['Inter', 'system-ui', 'sans-serif'],
+            serif: ['Newsreader', 'Georgia', 'serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              200: '#bbf7d0',
+              300: '#86efac',
+              400: '#4ade80',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+            }
+          },
+          animation: {
+            'pop': 'pop 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+            'freeze-glow': 'freezeGlow 1.5s ease-in-out infinite alternate',
+          },
+          keyframes: {
+            pop: {
+              '0%': { transform: 'scale(0.97)', opacity: '0' },
+              '100%': { transform: 'scale(1)', opacity: '1' },
+            },
+            freezeGlow: {
+              '0%': { boxShadow: '0 0 10px rgba(34, 197, 94, 0.3)' },
+              '100%': { boxShadow: '0 0 25px rgba(34, 197, 94, 0.7)' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root, [data-theme="violet"] {
+      --bg-main: #060907;
+      --bg-surface: #0e1410;
+      --bg-card: #131b15;
+      --border-color: rgba(34, 197, 94, 0.2);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --accent-glow: rgba(34, 197, 94, 0.22);
+      --accent-solid: #16a34a;
+      --hero-ambient: radial-gradient(circle at 75% 30%, rgba(34, 197, 94, 0.12) 0%, rgba(6, 78, 59, 0.03) 50%, transparent 75%);
+    }
+
+    [data-theme="oled"] {
+      --bg-main: #000000;
+      --bg-surface: #0a0a0a;
+      --bg-card: #121212;
+      --border-color: #1f2922;
+      --border-subtle: #222222;
+      --text-main: #ffffff;
+      --text-muted: #a1a1aa;
+      --accent-glow: rgba(34, 197, 94, 0.28);
+      --accent-solid: #10b981;
+      --hero-ambient: none;
+    }
+
+    [data-theme="arcade"] {
+      --bg-main: #03140a;
+      --bg-surface: #072212;
+      --bg-card: #0c2e19;
+      --border-color: rgba(74, 222, 128, 0.3);
+      --border-subtle: rgba(74, 222, 128, 0.15);
+      --text-main: #f0fdf4;
+      --text-muted: #86efac;
+      --accent-glow: rgba(74, 222, 128, 0.35);
+      --accent-solid: #22c55e;
+      --hero-ambient: radial-gradient(circle at 80% 20%, rgba(74, 222, 128, 0.18) 0%, transparent 60%);
+    }
+
+    [data-theme="light"] {
+      --bg-main: #ffffff;
+      --bg-surface: #ffffff;
+      --bg-card: #f8faf9;
+      --border-color: rgba(22, 163, 74, 0.2);
+      --border-subtle: rgba(0, 0, 0, 0.08);
+      --text-main: #0a0e0c;
+      --text-muted: #64748b;
+      --accent-glow: rgba(22, 163, 74, 0.12);
+      --accent-solid: #16a34a;
+      --hero-ambient: radial-gradient(circle at 75% 30%, rgba(34, 197, 94, 0.08) 0%, rgba(220, 252, 231, 0.35) 45%, transparent 70%);
+    }
+
+    [data-theme="light"] .text-white {
+      color: var(--text-main) !important;
+    }
+
+    [data-theme="light"] .bg-brand-600.text-white,
+    [data-theme="light"] .bg-brand-500.text-white,
+    [data-theme="light"] .bg-emerald-500.text-white,
+    [data-theme="light"] .bg-emerald-600.text-white,
+    [data-theme="light"] .bg-rose-500.text-white,
+    [data-theme="light"] .bg-amber-500.text-white,
+    [data-theme="light"] .bg-gradient-to-tr.text-white,
+    [data-theme="light"] .bg-gradient-to-r.text-white {
+      color: #ffffff !important;
+    }
+
+    [data-theme="light"] header {
+      background-color: rgba(255, 255, 255, 0.94) !important;
+      border-color: #d1d5db !important;
+    }
+
+    [data-theme="light"] .text-slate-300 {
+      color: #475569 !important;
+    }
+
+    [data-theme="light"] .text-slate-400 {
+      color: #64748b !important;
+    }
+
+    [data-theme="light"] .text-slate-500 {
+      color: #64748b !important;
+    }
+
+    [data-theme="light"] [class~="bg-white/5"] {
+      background-color: rgba(15, 23, 42, 0.04) !important;
+    }
+
+    [data-theme="light"] [class~="bg-white/10"] {
+      background-color: rgba(15, 23, 42, 0.08) !important;
+    }
+
+    [data-theme="light"] [class~="bg-black/30"],
+    [data-theme="light"] [class~="bg-black/40"] {
+      background-color: #ffffff !important;
+    }
+
+    [data-theme="light"] [class~="border-white/10"],
+    [data-theme="light"] [class~="border-white/15"] {
+      border-color: #cbd5e1 !important;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      background-image: var(--hero-ambient);
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      color: var(--text-main);
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    .theme-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.35), 0 0 20px var(--accent-glow);
+    }
+
+    .theme-subcard {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+    }
+
+    .eliminated-option {
+      opacity: 0.25 !important;
+      text-decoration: line-through !important;
+      pointer-events: none !important;
+      filter: grayscale(100%);
+    }
+
+    .option-btn {
+      transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .option-btn:not(:disabled):hover {
+      transform: translateY(-1.5px);
+      box-shadow: 0 8px 18px -4px var(--accent-glow);
+    }
+    .option-btn:not(:disabled):active {
+      transform: translateY(0);
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.05); }
+    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.25); border-radius: 9999px; }
+
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+    }
+  </style>
+</head>
+
+<body class="h-full font-sans antialiased flex flex-col selection:bg-brand-500 selection:text-white relative overflow-x-hidden" data-theme="violet">
+  <canvas id="confetti-canvas"></canvas>
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-full"></div>
+
+  <!-- Main Navigation Header -->
+  <header class="w-full border-b border-white/10 bg-slate-950/40 backdrop-blur-md sticky top-0 z-40 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+      <!-- App Identity -->
+      <div class="flex items-center gap-3 cursor-pointer select-none" id="nav-brand-btn">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-700 via-brand-600 to-brand-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <h1 class="font-display font-extrabold text-base tracking-tight leading-none text-white">iReviewer</h1>
+            <span id="active-mode-badge" class="px-2 py-0.5 text-[10px] font-mono font-semibold uppercase rounded bg-brand-500/15 text-brand-300 border border-brand-500/30">Classic</span>
+          </div>
+          <p class="text-[11px] text-slate-400 font-medium">Reviewer &amp; Quiz Maker</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 sm:gap-2.5">
+        <!-- PDF Reviewer Feature Trigger -->
+        <button id="open-pdf-btn" class="px-2.5 py-1.5 sm:px-3 rounded-xl bg-brand-600/15 hover:bg-brand-600/25 border border-brand-500/30 text-brand-300 text-xs font-semibold flex items-center gap-1.5 transition-all">
+          <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <span class="hidden sm:inline">PDF Reviewer</span>
+        </button>
+
+        <!-- Custom Deck Builder Button -->
+        <button id="open-builder-btn" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+          <span class="hidden sm:inline">Deck Editor</span>
+        </button>
+
+        <!-- Achievements Button -->
+        <button id="open-achievements-btn" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-brand-300 text-xs font-semibold flex items-center gap-1.5 transition-all">
+          <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+          </svg>
+          <span class="hidden sm:inline">Badges</span>
+          <span id="badges-unlocked-pill" class="px-1.5 py-0.2 rounded-full bg-brand-500/15 text-brand-300 font-mono text-[10px]">0/8</span>
+        </button>
+
+        <!-- Theme Selector -->
+        <select id="theme-selector" class="p-2 sm:px-2.5 sm:py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-xs font-semibold cursor-pointer outline-none focus:ring-2 focus:ring-brand-500">
+          <option value="violet" class="bg-stone-900 text-white">Animo Dark</option>
+          <option value="oled" class="bg-black text-white">Pure OLED</option>
+          <option value="arcade" class="bg-stone-950 text-emerald-400">Emerald Glow</option>
+          <option value="light" class="bg-slate-100 text-slate-900">Animo Light</option>
+        </select>
+
+        <!-- Sound Synthesizer Toggle -->
+        <button id="sound-toggle-btn" class="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition-colors" title="Toggle Audio FX">
+          <svg id="sound-on-icon" class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+          </svg>
+          <svg id="sound-off-icon" class="w-4 h-4 hidden text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zM17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-4xl w-full mx-auto px-4 py-6 sm:py-8 flex flex-col justify-center">
+
+    <!-- ==================== VIEW 1: START & CONFIG SCREEN ==================== -->
+    <section id="start-view" class="w-full theme-card rounded-3xl p-6 sm:p-10 animate-pop relative overflow-hidden">
+      <div class="text-center mb-8">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-medium uppercase tracking-[0.2em] bg-brand-500/10 text-brand-400 border border-brand-500/20 mb-3">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-400 inline-block"></span>
+          Multiple Choice Quiz Cards
+        </span>
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-display font-black tracking-tight mb-3 text-white leading-tight">
+          Study and Practice with<br class="hidden sm:inline">
+          <span class=""> iReviewer</span>
+        </h2>
+        <p class="text-slate-400 max-w-lg mx-auto text-xs sm:text-sm">
+          Select an evaluation mode, import study materials via PDF, or choose from curated domain questions.
+        </p>
+      </div>
+
+      <!-- Quick PDF Reviewer Highlight Banner -->
+      <div class="mb-8 p-4 rounded-2xl bg-gradient-to-r from-brand-600/15 via-brand-500/5 to-transparent border border-brand-500/30 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-brand-600/20 text-brand-400 flex items-center justify-center shrink-0 border border-brand-500/30">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+          </div>
+          <div>
+            <h4 class="text-sm font-display font-bold text-white">Have your own notes or syllabus?</h4>
+            <p class="text-xs text-slate-400">Upload a PDF to instantly extract notes, flashcards, and a generated reviewer quiz.</p>
+          </div>
+        </div>
+        <button id="banner-open-pdf-btn" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs transition-all shrink-0 flex items-center gap-2 shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          <span>Upload PDF Reviewer</span>
+        </button>
+      </div>
+
+      <!-- Mode Selector Tabs -->
+      <div class="mb-8">
+        <label class="block text-xs font-mono font-semibold uppercase tracking-wider text-slate-400 mb-3">Evaluation Mode</label>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <!-- Classic Mode -->
+          <button type="button" class="mode-tab-btn active p-4 rounded-2xl border-2 border-brand-500 bg-brand-500/10 text-left transition-all" data-mode="classic">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-display font-bold text-sm text-white">Standard Review</span>
+              <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9" stroke-width="2" />
+                <circle cx="12" cy="12" r="5" stroke-width="2" />
+                <circle cx="12" cy="12" r="1" fill="currentColor" />
+              </svg>
+            </div>
+            <p class="text-xs text-slate-400 leading-snug">Configurable question count and optional per-question response timer.</p>
+          </button>
+
+          <!-- Survival Mode -->
+          <button type="button" class="mode-tab-btn p-4 rounded-2xl border-2 border-white/10 bg-white/5 text-left transition-all hover:border-white/20" data-mode="survival">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-display font-bold text-sm text-white">Sudden Death</span>
+              <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <p class="text-xs text-slate-400 leading-snug">Strict survival session. Test ends immediately upon the first wrong answer.</p>
+          </button>
+
+          <!-- 60s Blitz Mode -->
+          <button type="button" class="mode-tab-btn p-4 rounded-2xl border-2 border-white/10 bg-white/5 text-left transition-all hover:border-white/20" data-mode="blitz">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-display font-bold text-sm text-white">60s Speedrun</span>
+              <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <p class="text-xs text-slate-400 leading-snug">One minute global timer. Answer as many questions correctly as possible.</p>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+        <!-- Category Selection -->
+        <div class="p-4 rounded-2xl theme-subcard">
+          <label class="block text-xs font-mono font-semibold uppercase tracking-wider text-slate-400 mb-2">Subject / Deck</label>
+          <select id="category-selector" class="w-full p-3 rounded-xl bg-black/30 border border-white/15 text-sm font-semibold text-white outline-none focus:ring-2 focus:ring-brand-500">
+            <option value="ALL">All Curated Categories</option>
+            <option value="Tech & Web">Software &amp; Web Systems</option>
+            <option value="Science & Cosmos">Physics &amp; Natural Science</option>
+            <option value="World & History">World History &amp; Foundations</option>
+            <option value="Gaming & Pop Culture">Culture &amp; Computing Lore</option>
+          </select>
+        </div>
+
+        <!-- Question Count (Classic only) -->
+        <div id="count-config-container" class="p-4 rounded-2xl theme-subcard">
+          <label class="block text-xs font-mono font-semibold uppercase tracking-wider text-slate-400 mb-2">Deck Size</label>
+          <div class="grid grid-cols-4 gap-2">
+            <button type="button" class="count-pill-btn p-2 rounded-xl text-xs font-mono font-bold border border-white/10 bg-white/5 hover:border-brand-500" data-count="5">5 Qs</button>
+            <button type="button" class="count-pill-btn active p-2 rounded-xl text-xs font-mono font-bold border-2 border-brand-500 bg-brand-500/20 text-white" data-count="10">10 Qs</button>
+            <button type="button" class="count-pill-btn p-2 rounded-xl text-xs font-mono font-bold border border-white/10 bg-white/5 hover:border-brand-500" data-count="15">15 Qs</button>
+            <button type="button" class="count-pill-btn p-2 rounded-xl text-xs font-mono font-bold border border-white/10 bg-white/5 hover:border-brand-500" data-count="ALL">All</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings & Assist Utilities -->
+      <div class="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl theme-subcard mb-8">
+        <div class="flex items-center gap-6">
+          <label id="timer-toggle-label" class="flex items-center gap-2 cursor-pointer select-none text-xs sm:text-sm font-medium">
+            <input type="checkbox" id="timer-toggle-input" checked class="w-4 h-4 rounded text-brand-500 focus:ring-brand-400 border-white/20 bg-black/40">
+            <span>15s Question Countdown</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer select-none text-xs sm:text-sm font-medium">
+            <input type="checkbox" id="shuffle-toggle-input" checked class="w-4 h-4 rounded text-brand-500 focus:ring-brand-400 border-white/20 bg-black/40">
+            <span>Randomize Order</span>
+          </label>
+        </div>
+
+        <div class="flex items-center gap-2 text-xs font-mono text-slate-400">
+          <span>Assists:</span>
+          <span class="px-2 py-0.5 rounded bg-white/5 text-slate-300 border border-white/10">50:50 [F]</span>
+          <span class="px-2 py-0.5 rounded bg-white/5 text-slate-300 border border-white/10">Freeze [T]</span>
+          <span class="px-2 py-0.5 rounded bg-white/5 text-slate-300 border border-white/10">Skip [S]</span>
+        </div>
+      </div>
+
+      <!-- Big CTA Start Button -->
+      <button id="start-game-btn" class="w-full py-3.5 px-8 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white font-display font-bold text-base shadow-lg shadow-brand-600/25 transition-all flex items-center justify-center gap-2.5">
+        <span>Start Evaluation Session</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+        </svg>
+      </button>
+    </section>
+
+    <!-- ==================== VIEW 2: ACTIVE GAMEPLAY ARENA ==================== -->
+    <section id="quiz-view" class="w-full hidden flex-col gap-4 animate-pop">
+      <!-- Real-time HUD Status Bar -->
+      <div class="theme-card rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3">
+        <!-- Question Tracker -->
+        <div class="flex items-center gap-3">
+          <div class="flex flex-col">
+            <span id="hud-mode-subtext" class="text-[10px] font-mono uppercase tracking-wider text-slate-400">Standard Review</span>
+            <span id="hud-progress-counter" class="font-display font-extrabold text-base text-white">Question 1 / 10</span>
+          </div>
+        </div>
+
+        <!-- Streak Gauge -->
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10">
+          <svg id="streak-fire-icon" class="w-4 h-4 text-brand-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+          </svg>
+          <div class="flex flex-col leading-tight">
+            <span class="text-[10px] font-mono text-slate-400 uppercase">Streak</span>
+            <div class="flex items-baseline gap-1">
+              <span id="streak-counter-value" class="font-bold text-xs text-brand-400">0x</span>
+              <span id="streak-multiplier-badge" class="text-[9px] font-mono px-1 py-0.2 rounded bg-brand-500/20 text-brand-300 font-semibold">1.0x</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Score Points Counter -->
+        <div class="flex flex-col items-end leading-tight">
+          <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400">Score</span>
+          <div class="flex items-baseline gap-1">
+            <span id="hud-points-total" class="font-display font-bold text-lg text-brand-400">0</span>
+            <span class="text-[11px] text-slate-400 font-mono">pts</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assist Utilities Bar -->
+      <div class="flex items-center justify-between gap-2 px-1">
+        <div class="flex items-center gap-2">
+          <!-- 50:50 Assist -->
+          <button id="lifeline-fifty-btn" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-300 hover:text-white flex items-center gap-1.5 transition-all disabled:opacity-30 disabled:pointer-events-none" title="Eliminate 2 wrong answers (Shortcut: F)">
+            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z" />
+            </svg>
+            <span>50:50</span>
+            <span class="text-[10px] font-mono opacity-60 hidden sm:inline">[F]</span>
+          </button>
+
+          <!-- Freeze Time Assist -->
+          <button id="lifeline-freeze-btn" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-300 hover:text-white flex items-center gap-1.5 transition-all disabled:opacity-30 disabled:pointer-events-none" title="Freeze Timer for 10s (Shortcut: T)">
+            <svg class="w-3.5 h-3.5 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Pause Timer</span>
+            <span class="text-[10px] font-mono opacity-60 hidden sm:inline">[T]</span>
+          </button>
+
+          <!-- Skip Question Assist -->
+          <button id="lifeline-skip-btn" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-300 hover:text-white flex items-center gap-1.5 transition-all disabled:opacity-30 disabled:pointer-events-none" title="Skip question without penalty (Shortcut: S)">
+            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+            </svg>
+            <span>Skip</span>
+            <span class="text-[10px] font-mono opacity-60 hidden sm:inline">[S]</span>
+          </button>
+        </div>
+
+        <!-- Timer numeric display -->
+        <div id="hud-timer-container" class="flex items-center gap-1.5 font-mono text-xs font-bold text-slate-300">
+          <svg class="w-3.5 h-3.5 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span id="hud-timer-seconds">15.0s</span>
+        </div>
+      </div>
+
+      <!-- Linear Timer Bar -->
+      <div class="w-full bg-white/10 h-1.5 rounded-full overflow-hidden relative">
+        <div id="countdown-progress-bar" class="bg-brand-500 h-full w-full transition-all duration-100 ease-linear"></div>
+      </div>
+
+      <!-- Question Card -->
+      <div class="theme-card rounded-3xl p-6 sm:p-8 flex flex-col relative">
+        <div class="flex items-center justify-between mb-4">
+          <span id="question-category-tag" class="px-2.5 py-0.5 rounded-md text-[11px] font-mono font-semibold uppercase bg-brand-500/15 text-brand-300 border border-brand-500/25">
+            Category
+          </span>
+          <span class="text-[11px] font-mono text-slate-400">
+            Keys [1-4] or [A-D] • [Space / Enter] Advance
+          </span>
+        </div>
+
+        <!-- Question Prompt -->
+        <h3 id="current-question-text" class="text-base sm:text-xl font-display font-semibold text-white leading-snug mb-6">
+          Loading Question...
+        </h3>
+
+        <!-- Options Container -->
+        <div id="options-container" class="grid grid-cols-1 gap-2.5 mb-6" role="radiogroup">
+          <!-- Populated dynamically via JS -->
+        </div>
+
+        <!-- Academic Rationale & Explanation Card -->
+        <div id="explanation-box" class="hidden rounded-2xl p-4 sm:p-5 theme-subcard mb-6 border-l-4 border-l-brand-500 animate-pop">
+          <div class="flex items-start gap-3">
+            <div id="explanation-icon-wrapper" class="w-6 h-6 rounded-lg bg-brand-500/20 text-brand-300 flex items-center justify-center shrink-0 mt-0.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div class="flex-1">
+              <h4 id="explanation-heading" class="text-xs font-mono font-bold uppercase tracking-wider text-slate-300 mb-1">Concept Rationale</h4>
+              <p id="explanation-body" class="text-xs sm:text-sm text-slate-300 leading-relaxed"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Action Bar -->
+        <div class="flex items-center justify-between pt-3 border-t border-white/10">
+          <span id="footer-status-hint" class="text-xs font-medium text-slate-400">
+            Select an answer to confirm
+          </span>
+
+          <button id="next-action-btn" disabled class="px-5 py-2.5 rounded-xl bg-brand-600 disabled:bg-white/10 disabled:text-slate-500 disabled:cursor-not-allowed hover:bg-brand-500 text-white font-semibold text-xs transition-all inline-flex items-center gap-2">
+            <span id="next-action-label">Next Question</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 3: RESULTS & METRICS ==================== -->
+    <section id="results-view" class="w-full hidden flex-col gap-6 animate-pop">
+      <div class="theme-card rounded-3xl p-6 sm:p-10 text-center relative overflow-hidden">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl mb-4 bg-brand-500/10 border border-brand-500/20 text-brand-400 shadow-sm mx-auto">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+
+        <h2 id="results-title" class="text-2xl sm:text-3xl font-display font-bold text-white mb-2">Session Complete</h2>
+        <p id="results-subtitle" class="text-slate-400 text-xs sm:text-sm max-w-md mx-auto mb-8">
+          Here is your comprehensive performance and concept retention breakdown.
+        </p>
+
+        <!-- Accuracy Radial Chart -->
+        <div class="flex flex-col items-center justify-center mb-8">
+          <div class="relative w-36 h-36 flex items-center justify-center">
+            <svg class="w-36 h-36 -rotate-90" viewBox="0 0 36 36">
+              <path class="text-white/10" stroke="currentColor" stroke-width="3.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <path id="results-radial-circle" class="text-brand-400 transition-all duration-1000 ease-out" stroke="currentColor" stroke-dasharray="100, 100" stroke-dashoffset="100" stroke-linecap="round" stroke-width="3.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            </svg>
+            <div class="absolute flex flex-col items-center">
+              <span id="results-accuracy-pct" class="text-3xl font-display font-bold text-white">0%</span>
+              <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Accuracy</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto mb-8">
+          <div class="p-3.5 rounded-2xl theme-subcard">
+            <span class="text-[10px] font-mono text-slate-400 uppercase">Correct Answers</span>
+            <p id="metric-score-fraction" class="text-base font-display font-bold text-white mt-0.5">0 / 10</p>
+          </div>
+          <div class="p-3.5 rounded-2xl theme-subcard">
+            <span class="text-[10px] font-mono text-slate-400 uppercase">Total Score</span>
+            <p id="metric-points-total" class="text-base font-display font-bold text-brand-400 mt-0.5">0 pts</p>
+          </div>
+          <div class="p-3.5 rounded-2xl theme-subcard">
+            <span class="text-[10px] font-mono text-slate-400 uppercase">Highest Streak</span>
+            <p id="metric-max-streak" class="text-base font-display font-bold text-brand-300 mt-0.5">0</p>
+          </div>
+          <div class="p-3.5 rounded-2xl theme-subcard">
+            <span class="text-[10px] font-mono text-slate-400 uppercase">Avg Response Time</span>
+            <p id="metric-avg-speed" class="text-base font-display font-bold text-slate-300 mt-0.5">0.0s</p>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <button id="replay-same-btn" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs transition-all flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+            <span>Retake Session</span>
+          </button>
+
+          <button id="share-scorecard-btn" class="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold text-xs transition-all flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+            <span>Copy Summary</span>
+          </button>
+
+          <button id="configure-new-btn" class="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white font-semibold text-xs transition-all flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
+            <span>Back to Settings</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Itemized Log -->
+      <div class="theme-card rounded-3xl p-6 sm:p-8">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/10">
+          <div>
+            <h3 class="text-base font-display font-bold text-white">Itemized Answer Log</h3>
+            <p class="text-xs text-slate-400">Review mistakes and verify explanations for reinforced learning.</p>
+          </div>
+
+          <div class="inline-flex p-1 bg-white/5 rounded-xl border border-white/10 text-xs font-mono" id="review-filter-container">
+            <button class="px-3 py-1.5 rounded-lg bg-brand-600 text-white font-semibold" data-filter="all">All (<span id="count-all">0</span>)</button>
+            <button class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white" data-filter="correct">Correct (<span id="count-correct">0</span>)</button>
+            <button class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white" data-filter="wrong">Missed (<span id="count-wrong">0</span>)</button>
+          </div>
+        </div>
+
+        <div id="review-cards-list" class="flex flex-col gap-3">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== MODAL: PDF REVIEWER & DECK GENERATOR ==================== -->
+  <div id="pdf-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm items-center justify-center p-4">
+    <div class="theme-card max-w-3xl w-full rounded-3xl p-6 sm:p-8 max-h-[90vh] flex flex-col animate-pop">
+      <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-display font-bold text-base text-white">PDF Document Reviewer</h3>
+            <p class="text-xs text-slate-400">Import textbooks, lecture slides, or lecture summaries into an interactive study deck.</p>
+          </div>
+        </div>
+        <button id="close-pdf-btn" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+
+      <!-- Drag & Drop Upload Zone -->
+      <div id="pdf-drop-zone" class="p-6 rounded-2xl border-2 border-dashed border-white/20 hover:border-brand-500/60 bg-white/5 text-center cursor-pointer transition-colors mb-4">
+        <input type="file" id="pdf-file-input" accept=".pdf" class="hidden">
+        <div class="w-10 h-10 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center mx-auto mb-2.5 border border-brand-500/20">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          </svg>
+        </div>
+        <h4 class="text-sm font-semibold text-white mb-1">Click to browse or drop your PDF here</h4>
+        <p class="text-xs text-slate-400">Extracted securely inside your browser. No files are uploaded to any external server.</p>
+      </div>
+
+      <!-- PDF Extraction Loading State -->
+      <div id="pdf-loading-state" class="hidden py-6 text-center space-y-2">
+        <div class="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+        <p class="text-xs font-mono text-brand-300" id="pdf-loading-status">Extracting text and concepts...</p>
+      </div>
+
+      <!-- Reviewer Content Output View -->
+      <div id="pdf-results-container" class="hidden flex-1 overflow-y-auto pr-1 flex-col gap-4">
+        <!-- Summary Stat Bar -->
+        <div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 text-xs">
+          <div class="flex items-center gap-4 text-slate-300 font-mono">
+            <span>Pages: <strong id="pdf-stat-pages" class="text-white">0</strong></span>
+            <span>Concepts: <strong id="pdf-stat-concepts" class="text-brand-400">0</strong></span>
+            <span>Generated Qs: <strong id="pdf-stat-questions" class="text-brand-300">0</strong></span>
+          </div>
+          <button id="launch-pdf-quiz-btn" class="px-3.5 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all">
+            <span>Take PDF Quiz Now</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </button>
+        </div>
+
+        <!-- Navigation Tabs: Flashcards Reviewer vs Generated Questions -->
+        <div class="flex items-center gap-2 border-b border-white/10 pb-2">
+          <button id="tab-reviewer-notes" class="px-3 py-1 rounded-lg bg-brand-500/20 text-brand-300 font-mono text-xs font-semibold">Key Concepts Cheatsheet</button>
+          <button id="tab-reviewer-questions" class="px-3 py-1 rounded-lg text-slate-400 hover:text-white font-mono text-xs font-semibold">Generated Quiz Questions</button>
+        </div>
+
+        <!-- Notes / Flashcards List -->
+        <div id="pdf-notes-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Questions Preview List -->
+        <div id="pdf-questions-list" class="hidden flex-col gap-3">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: CUSTOM DECK BUILDER ==================== -->
+  <div id="builder-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm items-center justify-center p-4">
+    <div class="theme-card max-w-2xl w-full rounded-3xl p-6 sm:p-8 max-h-[90vh] flex flex-col animate-pop">
+      <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-display font-bold text-base text-white">Manual Deck Editor</h3>
+            <p class="text-xs text-slate-400">Create, export, or import custom JSON question banks.</p>
+          </div>
+        </div>
+        <button id="close-builder-btn" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto pr-1 space-y-4 text-xs sm:text-sm">
+        <div class="p-4 rounded-2xl theme-subcard space-y-3">
+          <h4 class="font-mono font-semibold uppercase text-brand-300 text-xs">Add Single Question</h4>
+          <div>
+            <label class="block text-slate-400 text-xs mb-1">Question Prompt</label>
+            <input type="text" id="builder-q-text" placeholder="e.g., What is the default port for HTTPS?" class="w-full p-2.5 rounded-xl bg-black/40 border border-white/15 text-white outline-none focus:border-brand-500">
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div>
+              <label class="block text-slate-400 text-xs mb-1">Option A</label>
+              <input type="text" id="builder-opt-0" placeholder="Option A" class="w-full p-2 rounded-xl bg-black/40 border border-white/15 text-white outline-none">
+            </div>
+            <div>
+              <label class="block text-slate-400 text-xs mb-1">Option B</label>
+              <input type="text" id="builder-opt-1" placeholder="Option B" class="w-full p-2 rounded-xl bg-black/40 border border-white/15 text-white outline-none">
+            </div>
+            <div>
+              <label class="block text-slate-400 text-xs mb-1">Option C</label>
+              <input type="text" id="builder-opt-2" placeholder="Option C" class="w-full p-2 rounded-xl bg-black/40 border border-white/15 text-white outline-none">
+            </div>
+            <div>
+              <label class="block text-slate-400 text-xs mb-1">Option D</label>
+              <input type="text" id="builder-opt-3" placeholder="Option D" class="w-full p-2 rounded-xl bg-black/40 border border-white/15 text-white outline-none">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div>
+              <label class="block text-slate-400 text-xs mb-1">Correct Answer</label>
+              <select id="builder-correct-idx" class="w-full p-2 rounded-xl bg-black/40 border border-white/15 text-white outline-none">
+                <option value="0">Option A</option>
+                <option value="1">Option B</option>
+                <option value="2">Option C</option>
+                <option value="3">Option D</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-slate-400 text-xs mb-1">Category / Domain</label>
+              <input type="text" id="builder-category" placeholder="Custom Topic" class="w-full p-2 rounded-xl bg-black/40 border border-white/15 text-white outline-none">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-slate-400 text-xs mb-1">Concept Rationale / Explanation</label>
+            <input type="text" id="builder-explanation" placeholder="Why this option is correct..." class="w-full p-2.5 rounded-xl bg-black/40 border border-white/15 text-white outline-none">
+          </div>
+
+          <button id="builder-add-q-btn" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 font-semibold text-white text-xs">
+            Save Question to Local Deck
+          </button>
+        </div>
+
+        <div class="p-4 rounded-2xl theme-subcard space-y-2">
+          <div class="flex items-center justify-between">
+            <h4 class="font-mono font-semibold uppercase text-brand-300 text-xs">Deck JSON</h4>
+            <div class="flex gap-2">
+              <button id="builder-export-btn" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-mono">Copy</button>
+              <button id="builder-import-btn" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-mono text-brand-400">Import</button>
+              <button id="builder-clear-btn" class="px-2.5 py-1 rounded-lg bg-rose-500/20 text-rose-300 text-xs font-mono">Clear</button>
+            </div>
+          </div>
+          <textarea id="builder-json-area" rows="3" class="w-full p-2.5 rounded-xl bg-black/40 border border-white/15 font-mono text-xs text-slate-300 outline-none" placeholder="Paste question array JSON..."></textarea>
+          <p class="text-[11px] text-slate-400">Current custom questions: <strong id="builder-count-display">0</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL: ACHIEVEMENTS ==================== -->
+  <div id="achievements-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm items-center justify-center p-4">
+    <div class="theme-card max-w-lg w-full rounded-3xl p-6 sm:p-8 max-h-[90vh] flex flex-col animate-pop">
+      <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-display font-bold text-base text-white">Milestones &amp; Badges</h3>
+            <p class="text-xs text-slate-400">Track subject mastery and accuracy achievements.</p>
+          </div>
+        </div>
+        <button id="close-achievements-btn" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+
+      <div id="achievements-list-container" class="flex-1 overflow-y-auto pr-1 space-y-2.5">
+        <!-- Dynamically rendered badge items -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize PDF.js worker
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+
+    const MASTER_QUESTIONS = [
+      {
+        id: 1,
+        category: "Tech & Web",
+        question: "In the JavaScript Event Loop, where are callbacks from Promise.then() and queueMicrotask() queued?",
+        options: ["Microtask Queue (Job Queue)", "Macrotask Queue (Task Queue)", "Render Animation Frame", "Web Worker Thread"],
+        correctAnswer: 0,
+        explanation: "Microtasks have immediate execution priority and execute right after the current execution context finishes, before macrotasks or DOM repaints."
+      },
+      {
+        id: 2,
+        category: "Tech & Web",
+        question: "Which HTTP status code is officially designated for a resource that has been permanently relocated?",
+        options: ["302 Found", "307 Temporary Redirect", "301 Moved Permanently", "410 Gone"],
+        correctAnswer: 2,
+        explanation: "HTTP 301 designates a permanent redirection, prompting clients and search crawlers to update their bookmarks to the new URL."
+      },
+      {
+        id: 3,
+        category: "Tech & Web",
+        question: "In the CSS Box Model, which property sets the clearance immediately between content and the element border?",
+        options: ["Margin", "Padding", "Outline", "Gap"],
+        correctAnswer: 1,
+        explanation: "Padding defines the internal clearance surrounding the content box inside the element's border; margin applies outside the border."
+      },
+      {
+        id: 4,
+        category: "Tech & Web",
+        question: "What does the browser security standard acronym 'CORS' stand for?",
+        options: ["Cross-Origin Resource Sharing", "Centralized Origin Routing System", "Client Oriented Restriction Standard", "Cross-Object Request Socket"],
+        correctAnswer: 0,
+        explanation: "CORS stands for Cross-Origin Resource Sharing, an HTTP-header-based mechanism that lets servers specify origins permitted to load restricted resources."
+      },
+      {
+        id: 5,
+        category: "Tech & Web",
+        question: "What is the average time complexity of the QuickSort algorithm when sorting N elements?",
+        options: ["O(N²)", "O(N log N)", "O(N)", "O(log N)"],
+        correctAnswer: 1,
+        explanation: "QuickSort uses divide-and-conquer to achieve an average complexity of O(N log N), degrading to O(N²) only on degenerated pivot choices."
+      },
+      {
+        id: 6,
+        category: "Tech & Web",
+        question: "Which TypeScript utility type constructs a type where every property of T is optional?",
+        options: ["Partial<T>", "Omit<T, K>", "Record<K, T>", "Readonly<T>"],
+        correctAnswer: 0,
+        explanation: "Partial<T> appends the optional modifier (?) to all properties of type T."
+      },
+      {
+        id: 7,
+        category: "Tech & Web",
+        question: "Which ACID database property guarantees that all operations in a transaction either commit completely or roll back?",
+        options: ["Atomicity", "Consistency", "Isolation", "Durability"],
+        correctAnswer: 0,
+        explanation: "Atomicity ensures 'all-or-nothing' execution of database transactions, preventing partial or corrupt states."
+      },
+      {
+        id: 8,
+        category: "Science & Cosmos",
+        question: "Approximately how fast does light travel in a vacuum?",
+        options: ["300,000 km/s", "150,000 km/s", "1,000,000 km/s", "30,000 km/s"],
+        correctAnswer: 0,
+        explanation: "Light in vacuum travels at approximately 299,792 kilometers per second (about 186,282 miles per second)."
+      },
+      {
+        id: 9,
+        category: "Science & Cosmos",
+        question: "What is the theoretical temperature known as Absolute Zero in degrees Celsius?",
+        options: ["-273.15 °C", "-100.00 °C", "-459.67 °C", "-212.00 °C"],
+        correctAnswer: 0,
+        explanation: "Absolute zero corresponds to 0 Kelvin, or -273.15 degrees Celsius, at which thermodynamic particle movement reaches minimum enthalpy."
+      },
+      {
+        id: 10,
+        category: "Science & Cosmos",
+        question: "Which organelle is universally termed the powerhouse of the eukaryotic cell?",
+        options: ["Ribosome", "Mitochondria", "Endoplasmic Reticulum", "Golgi Body"],
+        correctAnswer: 1,
+        explanation: "Mitochondria generate most of the cell's chemical energy supply through the synthesis of adenosine triphosphate (ATP)."
+      },
+      {
+        id: 11,
+        category: "Science & Cosmos",
+        question: "What is the boundary surrounding a black hole from which nothing, not even light, can escape?",
+        options: ["Singularity", "Photon Sphere", "Event Horizon", "Accretion Disk"],
+        correctAnswer: 2,
+        explanation: "The event horizon marks the gravitational boundary where escape velocity exceeds the speed of light."
+      },
+      {
+        id: 12,
+        category: "Science & Cosmos",
+        question: "Which nitrogenous base pairs with Adenine (A) in standard DNA duplex chains?",
+        options: ["Cytosine", "Guanine", "Thymine", "Uracil"],
+        correctAnswer: 2,
+        explanation: "In DNA, Adenine (A) forms two hydrogen bonds with Thymine (T). In RNA, Adenine pairs with Uracil (U)."
+      },
+      {
+        id: 13,
+        category: "World & History",
+        question: "Who introduced movable metal type printing in Europe around the year 1440?",
+        options: ["Johannes Gutenberg", "Leonardo da Vinci", "Albrecht Dürer", "Galileo Galilei"],
+        correctAnswer: 0,
+        explanation: "Johannes Gutenberg's movable type printing press in Mainz democratized knowledge dissemination and catalyzed the European Renaissance."
+      },
+      {
+        id: 14,
+        category: "World & History",
+        question: "In which year was the historic Magna Carta signed at Runnymede by King John of England?",
+        options: ["1066", "1215", "1492", "1776"],
+        correctAnswer: 1,
+        explanation: "The Magna Carta was signed in June 1215, laying foundations for constitutional governance and individual legal protections."
+      },
+      {
+        id: 15,
+        category: "World & History",
+        question: "Which ancient artifact allowed Jean-François Champollion to decipher Egyptian hieroglyphs in 1822?",
+        options: ["Dead Sea Scrolls", "Rosetta Stone", "Code of Hammurabi", "Cyrus Cylinder"],
+        correctAnswer: 1,
+        explanation: "The Rosetta Stone features parallel decree inscriptions in Hieroglyphic, Demotic, and Ancient Greek, unlocking the translation of hieroglyphs."
+      },
+      {
+        id: 16,
+        category: "Gaming & Pop Culture",
+        question: "What was Mario's original character moniker during his 1981 debut in Donkey Kong?",
+        options: ["Plumber Boy", "Jumpman", "Luigi", "Red Cap"],
+        correctAnswer: 1,
+        explanation: "Created by Shigeru Miyamoto, Mario was initially named Jumpman before being renamed Mario in tribute to warehouse landlord Mario Segale."
+      },
+      {
+        id: 17,
+        category: "Gaming & Pop Culture",
+        question: "According to Pokémon franchise index internals, which Pokémon was the very first ever designed?",
+        options: ["Pikachu", "Bulbasaur", "Rhydon", "Mew"],
+        correctAnswer: 2,
+        explanation: "Ken Sugimori confirmed that Rhydon was the first Pokémon created during early Game Boy development, indexed as #001 in internal ROM tables."
+      }
+    ];
+
+    // Synthesizer Audio Engine
+    const AudioEngine = (() => {
+      let audioCtx = null;
+      let soundEnabled = true;
+
+      function getCtx() {
+        if (!audioCtx) {
+          const CtxClass = window.AudioContext || window.webkitAudioContext;
+          if (CtxClass) audioCtx = new CtxClass();
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        return audioCtx;
+      }
+
+      return {
+        toggleSound(enable) {
+          soundEnabled = enable;
+          return soundEnabled;
+        },
+        isEnabled() {
+          return soundEnabled;
+        },
+        playClick() {
+          if (!soundEnabled) return;
+          try {
+            const ctx = getCtx();
+            if (!ctx) return;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, ctx.currentTime);
+            gain.gain.setValueAtTime(0.05, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.04);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.04);
+          } catch(e) {}
+        },
+        playTick() {
+          if (!soundEnabled) return;
+          try {
+            const ctx = getCtx();
+            if (!ctx) return;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(880, ctx.currentTime);
+            gain.gain.setValueAtTime(0.03, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.03);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.03);
+          } catch(e) {}
+        },
+        playCorrect(streak = 1) {
+          if (!soundEnabled) return;
+          try {
+            const ctx = getCtx();
+            if (!ctx) return;
+            const now = ctx.currentTime;
+            const chord = [523.25, 659.25, 783.99, 1046.50];
+            chord.forEach((freq, idx) => {
+              const osc = ctx.createOscillator();
+              const gain = ctx.createGain();
+              osc.type = 'sine';
+              osc.frequency.setValueAtTime(freq, now + idx * 0.05);
+              gain.gain.setValueAtTime(0.07, now + idx * 0.05);
+              gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.05 + 0.18);
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.start(now + idx * 0.05);
+              osc.stop(now + idx * 0.05 + 0.18);
+            });
+          } catch(e) {}
+        },
+        playWrong() {
+          if (!soundEnabled) return;
+          try {
+            const ctx = getCtx();
+            if (!ctx) return;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(200, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.22);
+            gain.gain.setValueAtTime(0.08, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.22);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.22);
+          } catch(e) {}
+        },
+        playLifeline() {
+          if (!soundEnabled) return;
+          try {
+            const ctx = getCtx();
+            if (!ctx) return;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(350, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.2);
+            gain.gain.setValueAtTime(0.08, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.2);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.2);
+          } catch(e) {}
+        }
+      };
+    })();
+
+    // Lightweight Confetti Particles
+    const ConfettiSystem = (() => {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      let frameId = null;
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      function spawn(count = 90) {
+        const palette = ['#16a34a', '#22c55e', '#4ade80', '#86efac', '#dcfce7'];
+        particles = [];
+        for (let i = 0; i < count; i++) {
+          particles.push({
+            x: canvas.width / 2,
+            y: canvas.height * 0.45,
+            vx: (Math.random() - 0.5) * 16,
+            vy: (Math.random() - 0.8) * 16,
+            size: Math.random() * 6 + 3,
+            color: palette[Math.floor(Math.random() * palette.length)],
+            rotation: Math.random() * 360,
+            rotSpeed: (Math.random() - 0.5) * 12,
+            gravity: 0.32,
+            drag: 0.96,
+            opacity: 1
+          });
+        }
+      }
+
+      function loop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let living = 0;
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          if (p.opacity <= 0) continue;
+          p.vx *= p.drag;
+          p.vy *= p.drag;
+          p.vy += p.gravity;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rotation += p.rotSpeed;
+          p.opacity -= 0.01;
+          if (p.opacity > 0) {
+            living++;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate((p.rotation * Math.PI) / 180);
+            ctx.globalAlpha = Math.max(0, p.opacity);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+          }
+        }
+        if (living > 0) {
+          frameId = requestAnimationFrame(loop);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          cancelAnimationFrame(frameId);
+        }
+      }
+
+      return {
+        burst() {
+          cancelAnimationFrame(frameId);
+          spawn(100);
+          loop();
+        }
+      };
+    })();
+
+    // Toast Manager
+    const Toast = {
+      show(title, message, duration = 3000) {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        const toast = document.createElement('div');
+        toast.className = 'theme-card pointer-events-auto p-3.5 rounded-2xl border border-brand-500/30 shadow-xl flex items-start gap-3 animate-pop';
+        toast.innerHTML = `
+          <div class="w-2 h-2 rounded-full bg-brand-400 mt-1.5 shrink-0"></div>
+          <div class="flex-1">
+            <h5 class="font-display font-semibold text-xs text-white">${title}</h5>
+            <p class="text-[11px] text-slate-300 mt-0.5">${message}</p>
+          </div>
+        `;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(8px)';
+          toast.style.transition = 'all 0.25s ease';
+          setTimeout(() => toast.remove(), 250);
+        }, duration);
+      }
+    };
+
+    // PDF Extraction & Heuristic Reviewer Generator
+    const PDFReviewerEngine = {
+      currentPDFQuestions: [],
+      currentPDFConcepts: [],
+
+      async processFile(file) {
+        if (!window.pdfjsLib) {
+          throw new Error('PDF.js library could not be loaded.');
+        }
+
+        const arrayBuffer = await file.arrayBuffer();
+        const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+        const pdf = await loadingTask.promise;
+        const totalPages = pdf.numPages;
+
+        let accumulatedText = '';
+        for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+          DOM.pdfLoadingStatus.textContent = `Extracting page ${pageNum} of ${totalPages}...`;
+          const page = await pdf.getPage(pageNum);
+          const textContent = await page.getTextContent();
+          const pageText = textContent.items.map(item => item.str).join(' ');
+          accumulatedText += `\n` + pageText;
+        }
+
+        DOM.pdfLoadingStatus.textContent = 'Synthesizing definitions & reviewer questions...';
+        const { concepts, questions } = this.generateReviewerFromText(accumulatedText, file.name);
+
+        this.currentPDFConcepts = concepts;
+        this.currentPDFQuestions = questions;
+
+        return { totalPages, concepts, questions };
+      },
+
+      generateReviewerFromText(rawText, docName) {
+        const cleaned = rawText
+          .replace(/(\r\n|\n|\r)/gm, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+
+        const sentences = cleaned.split(/(?<=[.?!])\s+/).filter(s => s.length >= 35 && s.length <= 220);
+        const concepts = [];
+        const questions = [];
+
+        sentences.forEach((sentence, idx) => {
+          const match = sentence.match(/^([A-Z][A-Za-z0-9\s\-]{2,35})\s+(?:is defined as|refers to|is an|is a|are|means|consists of)\s+(.+)/i);
+          if (match && concepts.length < 30) {
+            const term = match[1].trim();
+            const definition = match[2].trim().replace(/[.;]$/, '');
+
+            if (term.length > 2 && term.split(' ').length <= 4 && !concepts.some(c => c.term.toLowerCase() === term.toLowerCase())) {
+              concepts.push({ term, definition, sourceSentence: sentence });
+            }
+          }
+        });
+
+        if (concepts.length < 5) {
+          const capitalizedWords = cleaned.match(/\b[A-Z][a-z]{3,}(?:\s+[A-Z][a-z]{3,})?\b/g) || [];
+          const freqMap = {};
+          capitalizedWords.forEach(w => {
+            if (!['This', 'That', 'These', 'Those', 'With', 'From', 'When', 'What', 'Where', 'Which'].includes(w)) {
+              freqMap[w] = (freqMap[w] || 0) + 1;
+            }
+          });
+
+          const sortedTerms = Object.keys(freqMap).sort((a, b) => freqMap[b] - freqMap[a]).slice(0, 15);
+          sortedTerms.forEach(term => {
+            if (!concepts.some(c => c.term.toLowerCase() === term.toLowerCase())) {
+              const matchedSentence = sentences.find(s => s.includes(term));
+              if (matchedSentence) {
+                concepts.push({
+                  term: term,
+                  definition: matchedSentence,
+                  sourceSentence: matchedSentence
+                });
+              }
+            }
+          });
+        }
+
+        const allTerms = concepts.map(c => c.term);
+
+        concepts.forEach((item, idx) => {
+          if (questions.length >= 20) return;
+
+          const otherTerms = allTerms.filter(t => t.toLowerCase() !== item.term.toLowerCase());
+          if (otherTerms.length < 3) return;
+
+          const shuffledDistractors = shuffleList(otherTerms).slice(0, 3);
+          const options = shuffleList([item.term, ...shuffledDistractors]);
+          const correctIndex = options.indexOf(item.term);
+
+          let prompt = `Which term is described by: "${item.definition.length > 120 ? item.definition.slice(0, 120) + '...' : item.definition}"?`;
+          if (item.sourceSentence.toLowerCase().includes('refers to') || item.sourceSentence.toLowerCase().includes('is defined as')) {
+            prompt = item.sourceSentence.replace(new RegExp(`\\b${item.term}\\b`, 'i'), '_______');
+            prompt = `Fill in the blank: "${prompt}"`;
+          }
+
+          questions.push({
+            id: `pdf-${idx + 1}`,
+            category: docName.replace('.pdf', '').slice(0, 24),
+            question: prompt,
+            options: options,
+            correctAnswer: correctIndex,
+            explanation: `Key Concept: ${item.term} — ${item.sourceSentence}`
+          });
+        });
+
+        return { concepts, questions };
+      }
+    };
+
+    // Custom Deck Manager
+    const CustomDeckManager = {
+      storageKey: 'devquiz_custom_deck_cards',
+      getDeck() {
+        try {
+          const raw = localStorage.getItem(this.storageKey);
+          return raw ? JSON.parse(raw) : [];
+        } catch(e) { return []; }
+      },
+      saveDeck(deck) {
+        localStorage.setItem(this.storageKey, JSON.stringify(deck));
+        this.updateCount();
+        this.refreshCategoryDropdown();
+      },
+      updateCount() {
+        const count = this.getDeck().length;
+        const el = document.getElementById('builder-count-display');
+        if (el) el.textContent = count;
+      },
+      refreshCategoryDropdown() {
+        const select = document.getElementById('category-selector');
+        if (!select) return;
+        const customCount = this.getDeck().length;
+        let customOpt = select.querySelector('option[value="CUSTOM"]');
+        if (customCount > 0) {
+          if (!customOpt) {
+            customOpt = document.createElement('option');
+            customOpt.value = "CUSTOM";
+            select.appendChild(customOpt);
+          }
+          customOpt.textContent = `Custom Deck (${customCount} Qs)`;
+        } else if (customOpt) {
+          customOpt.remove();
+        }
+      }
+    };
+
+    // Achievements Definition & Manager
+    const ACHIEVEMENTS_DEF = [
+      { id: 'FIRST_WIN', title: 'Session Completed', desc: 'Finish any evaluation deck', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' },
+      { id: 'SPEED_DEMON', title: 'Rapid Reflex', desc: 'Answer correctly within 3.0 seconds', icon: 'M13 10V3L4 14h7v7l9-11h-7z' },
+      { id: 'HOT_STREAK', title: 'Precision Streak', desc: 'Achieve a 5x streak without error', icon: 'M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z' },
+      { id: 'UNTOUCHABLE', title: 'Flawless Chain', desc: 'Reach an 8x answer streak', icon: 'M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z' },
+      { id: 'PERFECT_SCORE', title: '100% Mastery', desc: 'Complete Classic Mode with zero errors (5+ Qs)', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
+      { id: 'SURVIVOR_LEGEND', title: 'Iron Focus', desc: 'Reach 8 questions in Sudden Death', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+      { id: 'BLITZ_FRENZY', title: 'Speedrun Veteran', desc: 'Score 8+ correct in 60s Blitz', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
+      { id: 'PDF_SCHOLAR', title: 'PDF Researcher', desc: 'Generate & complete a quiz from a PDF file', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' }
+    ];
+
+    const AchievementsManager = {
+      storageKey: 'devquiz_unlocked_achievements',
+      getUnlocked() {
+        try {
+          const raw = localStorage.getItem(this.storageKey);
+          return raw ? JSON.parse(raw) : [];
+        } catch(e) { return []; }
+      },
+      unlock(id) {
+        const unlocked = this.getUnlocked();
+        if (!unlocked.includes(id)) {
+          unlocked.push(id);
+          localStorage.setItem(this.storageKey, JSON.stringify(unlocked));
+          const badge = ACHIEVEMENTS_DEF.find(a => a.id === id);
+          if (badge) {
+            Toast.show(`Milestone Reached: ${badge.title}`, badge.desc);
+          }
+          this.updatePill();
+        }
+      },
+      updatePill() {
+        const count = this.getUnlocked().length;
+        const pill = document.getElementById('badges-unlocked-pill');
+        if (pill) pill.textContent = `${count}/${ACHIEVEMENTS_DEF.length}`;
+      },
+      renderModal() {
+        const container = document.getElementById('achievements-list-container');
+        if (!container) return;
+        container.innerHTML = '';
+        const unlocked = this.getUnlocked();
+
+        ACHIEVEMENTS_DEF.forEach(item => {
+          const has = unlocked.includes(item.id);
+          const card = document.createElement('div');
+          card.className = `p-3 rounded-2xl border flex items-center gap-3 transition-all ${
+            has ? 'bg-brand-500/10 border-brand-500/30' : 'bg-white/5 border-white/10 opacity-50'
+          }`;
+          card.innerHTML = `
+            <div class="w-9 h-9 rounded-xl ${has ? 'bg-brand-500/20 text-brand-400' : 'bg-white/5 text-slate-500'} flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${item.icon}"/></svg>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <h4 class="font-display font-bold text-xs text-white">${item.title}</h4>
+                <span class="text-[10px] font-mono font-semibold uppercase ${has ? 'text-brand-400' : 'text-slate-500'}">
+                  ${has ? 'Unlocked' : 'Locked'}
+                </span>
+              </div>
+              <p class="text-[11px] text-slate-400">${item.desc}</p>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      }
+    };
+
+    const ArenaState = {
+      mode: 'classic',
+      category: 'ALL',
+      requestedCount: 10,
+      timerEnabled: true,
+      shuffleEnabled: true,
+      isPDFMode: false,
+
+      activeDeck: [],
+      currentIndex: 0,
+      scoreCount: 0,
+      totalPoints: 0,
+      streak: 0,
+      maxStreak: 0,
+      isAnswerLocked: false,
+      history: [],
+
+      timerDuration: 15,
+      timerRemaining: 15,
+      timerInterval: null,
+      questionStartTime: null,
+      gameStartTime: null,
+      isFrozen: false,
+      freezeTimeout: null,
+
+      blitzDuration: 60,
+      blitzRemaining: 60,
+
+      lifelines: {
+        fiftyFifty: 1,
+        freeze: 1,
+        skip: 1
+      },
+
+      reset() {
+        this.currentIndex = 0;
+        this.scoreCount = 0;
+        this.totalPoints = 0;
+        this.streak = 0;
+        this.maxStreak = 0;
+        this.isAnswerLocked = false;
+        this.history = [];
+        this.lifelines = { fiftyFifty: 1, freeze: 1, skip: 1 };
+        this.isFrozen = false;
+        this.clearTimers();
+      },
+
+      clearTimers() {
+        if (this.timerInterval) clearInterval(this.timerInterval);
+        this.timerInterval = null;
+        if (this.freezeTimeout) clearTimeout(this.freezeTimeout);
+        this.freezeTimeout = null;
+      }
+    };
+
+    function shuffleList(list) {
+      const arr = [...list];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    const DOM = {
+      startView: document.getElementById('start-view'),
+      quizView: document.getElementById('quiz-view'),
+      resultsView: document.getElementById('results-view'),
+      builderModal: document.getElementById('builder-modal'),
+      achievementsModal: document.getElementById('achievements-modal'),
+      pdfModal: document.getElementById('pdf-modal'),
+
+      themeSelector: document.getElementById('theme-selector'),
+      soundToggleBtn: document.getElementById('sound-toggle-btn'),
+      soundOnIcon: document.getElementById('sound-on-icon'),
+      soundOffIcon: document.getElementById('sound-off-icon'),
+      activeModeBadge: document.getElementById('active-mode-badge'),
+      navBrandBtn: document.getElementById('nav-brand-btn'),
+
+      categorySelector: document.getElementById('category-selector'),
+      timerToggleInput: document.getElementById('timer-toggle-input'),
+      shuffleToggleInput: document.getElementById('shuffle-toggle-input'),
+      countConfigContainer: document.getElementById('count-config-container'),
+      startGameBtn: document.getElementById('start-game-btn'),
+
+      hudModeSubtext: document.getElementById('hud-mode-subtext'),
+      hudProgressCounter: document.getElementById('hud-progress-counter'),
+      streakFireIcon: document.getElementById('streak-fire-icon'),
+      streakCounterValue: document.getElementById('streak-counter-value'),
+      streakMultiplierBadge: document.getElementById('streak-multiplier-badge'),
+      hudPointsTotal: document.getElementById('hud-points-total'),
+      hudTimerSeconds: document.getElementById('hud-timer-seconds'),
+      countdownProgressBar: document.getElementById('countdown-progress-bar'),
+
+      fiftyFiftyBtn: document.getElementById('lifeline-fifty-btn'),
+      freezeBtn: document.getElementById('lifeline-freeze-btn'),
+      skipBtn: document.getElementById('lifeline-skip-btn'),
+
+      questionCategoryTag: document.getElementById('question-category-tag'),
+      currentQuestionText: document.getElementById('current-question-text'),
+      optionsContainer: document.getElementById('options-container'),
+      explanationBox: document.getElementById('explanation-box'),
+      explanationHeading: document.getElementById('explanation-heading'),
+      explanationBody: document.getElementById('explanation-body'),
+      footerStatusHint: document.getElementById('footer-status-hint'),
+      nextActionBtn: document.getElementById('next-action-btn'),
+      nextActionLabel: document.getElementById('next-action-label'),
+
+      resultsTitle: document.getElementById('results-title'),
+      resultsSubtitle: document.getElementById('results-subtitle'),
+      resultsRadialCircle: document.getElementById('results-radial-circle'),
+      resultsAccuracyPct: document.getElementById('results-accuracy-pct'),
+      metricScoreFraction: document.getElementById('metric-score-fraction'),
+      metricPointsTotal: document.getElementById('metric-points-total'),
+      metricMaxStreak: document.getElementById('metric-max-streak'),
+      metricAvgSpeed: document.getElementById('metric-avg-speed'),
+      replaySameBtn: document.getElementById('replay-same-btn'),
+      shareScorecardBtn: document.getElementById('share-scorecard-btn'),
+      configureNewBtn: document.getElementById('configure-new-btn'),
+      reviewCardsList: document.getElementById('review-cards-list'),
+      reviewFilterContainer: document.getElementById('review-filter-container'),
+      countAll: document.getElementById('count-all'),
+      countCorrect: document.getElementById('count-correct'),
+      countWrong: document.getElementById('count-wrong'),
+
+      // PDF Reviewer DOM
+      openPdfBtn: document.getElementById('open-pdf-btn'),
+      bannerOpenPdfBtn: document.getElementById('banner-open-pdf-btn'),
+      closePdfBtn: document.getElementById('close-pdf-btn'),
+      pdfDropZone: document.getElementById('pdf-drop-zone'),
+      pdfFileInput: document.getElementById('pdf-file-input'),
+      pdfLoadingState: document.getElementById('pdf-loading-state'),
+      pdfLoadingStatus: document.getElementById('pdf-loading-status'),
+      pdfResultsContainer: document.getElementById('pdf-results-container'),
+      pdfStatPages: document.getElementById('pdf-stat-pages'),
+      pdfStatConcepts: document.getElementById('pdf-stat-concepts'),
+      pdfStatQuestions: document.getElementById('pdf-stat-questions'),
+      launchPdfQuizBtn: document.getElementById('launch-pdf-quiz-btn'),
+      tabReviewerNotes: document.getElementById('tab-reviewer-notes'),
+      tabReviewerQuestions: document.getElementById('tab-reviewer-questions'),
+      pdfNotesList: document.getElementById('pdf-notes-list'),
+      pdfQuestionsList: document.getElementById('pdf-questions-list'),
+
+      // Builder DOM
+      builderQText: document.getElementById('builder-q-text'),
+      builderOpt0: document.getElementById('builder-opt-0'),
+      builderOpt1: document.getElementById('builder-opt-1'),
+      builderOpt2: document.getElementById('builder-opt-2'),
+      builderOpt3: document.getElementById('builder-opt-3'),
+      builderCorrectIdx: document.getElementById('builder-correct-idx'),
+      builderCategory: document.getElementById('builder-category'),
+      builderExplanation: document.getElementById('builder-explanation'),
+      builderAddQBtn: document.getElementById('builder-add-q-btn'),
+      builderJsonArea: document.getElementById('builder-json-area'),
+      builderExportBtn: document.getElementById('builder-export-btn'),
+      builderImportBtn: document.getElementById('builder-import-btn'),
+      builderClearBtn: document.getElementById('builder-clear-btn')
+    };
+
+    const QuizTimer = {
+      startQuestionTimer() {
+        ArenaState.clearTimers();
+        ArenaState.timerRemaining = ArenaState.timerDuration;
+        this.renderBar(ArenaState.timerRemaining, ArenaState.timerDuration);
+
+        ArenaState.timerInterval = setInterval(() => {
+          if (ArenaState.isFrozen) return;
+          ArenaState.timerRemaining = Math.max(0, +(ArenaState.timerRemaining - 0.1).toFixed(1));
+          this.renderBar(ArenaState.timerRemaining, ArenaState.timerDuration);
+
+          if (ArenaState.timerRemaining <= 4 && Math.round(ArenaState.timerRemaining * 10) % 10 === 0) {
+            AudioEngine.playTick();
+          }
+
+          if (ArenaState.timerRemaining <= 0) {
+            ArenaState.clearTimers();
+            handleTimeout();
+          }
+        }, 100);
+      },
+
+      startBlitzGlobalTimer() {
+        ArenaState.clearTimers();
+        ArenaState.blitzRemaining = ArenaState.blitzDuration;
+        this.renderBar(ArenaState.blitzRemaining, ArenaState.blitzDuration);
+
+        ArenaState.timerInterval = setInterval(() => {
+          if (ArenaState.isFrozen) return;
+          ArenaState.blitzRemaining = Math.max(0, +(ArenaState.blitzRemaining - 0.1).toFixed(1));
+          this.renderBar(ArenaState.blitzRemaining, ArenaState.blitzDuration);
+
+          if (ArenaState.blitzRemaining <= 5 && Math.round(ArenaState.blitzRemaining * 10) % 10 === 0) {
+            AudioEngine.playTick();
+          }
+
+          if (ArenaState.blitzRemaining <= 0) {
+            ArenaState.clearTimers();
+            endGameSession();
+          }
+        }, 100);
+      },
+
+      renderBar(remaining, total) {
+        if (!DOM.hudTimerSeconds) return;
+        DOM.hudTimerSeconds.textContent = `${remaining.toFixed(1)}s`;
+        const pct = Math.max(0, Math.min(100, (remaining / total) * 100));
+        DOM.countdownProgressBar.style.width = `${pct}%`;
+
+        if (pct < 25) {
+          DOM.countdownProgressBar.className = 'bg-rose-500 h-full transition-all duration-100 ease-linear';
+        } else if (pct < 50) {
+          DOM.countdownProgressBar.className = 'bg-amber-500 h-full transition-all duration-100 ease-linear';
+        } else {
+          DOM.countdownProgressBar.className = 'bg-brand-500 h-full transition-all duration-100 ease-linear';
+        }
+      },
+
+      applyFreeze(seconds = 10) {
+        if (ArenaState.isFrozen) return;
+        ArenaState.isFrozen = true;
+        DOM.countdownProgressBar.parentElement.classList.add('animate-freeze-glow');
+        DOM.hudTimerSeconds.classList.add('text-brand-400');
+        Toast.show('Timer Paused', `Countdown suspended for ${seconds} seconds.`);
+
+        ArenaState.freezeTimeout = setTimeout(() => {
+          ArenaState.isFrozen = false;
+          DOM.countdownProgressBar.parentElement.classList.remove('animate-freeze-glow');
+          DOM.hudTimerSeconds.classList.remove('text-brand-400');
+        }, seconds * 1000);
+      }
+    };
+
+    function renderQuestion(index) {
+      ArenaState.isAnswerLocked = false;
+      ArenaState.questionStartTime = Date.now();
+      const q = ArenaState.activeDeck[index];
+      const total = ArenaState.activeDeck.length;
+
+      if (ArenaState.mode === 'survival') {
+        DOM.hudProgressCounter.textContent = `Completed: ${ArenaState.scoreCount} (Lives: 1)`;
+      } else if (ArenaState.mode === 'blitz') {
+        DOM.hudProgressCounter.textContent = `Answered: ${index}`;
+      } else {
+        DOM.hudProgressCounter.textContent = `Question ${index + 1} of ${total}`;
+      }
+
+      DOM.questionCategoryTag.textContent = q.category;
+      DOM.currentQuestionText.textContent = q.question;
+
+      DOM.nextActionBtn.disabled = true;
+      DOM.nextActionLabel.textContent = (ArenaState.mode === 'classic' && index === total - 1) ? 'Finish & View Summary' : 'Next Question';
+      DOM.explanationBox.classList.add('hidden');
+      DOM.footerStatusHint.textContent = 'Select an option above to confirm your answer';
+      DOM.footerStatusHint.className = 'text-xs font-medium text-slate-400';
+
+      DOM.optionsContainer.innerHTML = '';
+      const letters = ['A', 'B', 'C', 'D'];
+
+      q.options.forEach((optText, optIdx) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.dataset.idx = optIdx;
+        btn.className = 'option-btn w-full text-left p-3.5 rounded-2xl theme-subcard hover:border-brand-400 flex items-center justify-between group focus:outline-none focus:ring-2 focus:ring-brand-500';
+        btn.innerHTML = `
+          <div class="flex items-center gap-3 pr-2">
+            <span class="w-7 h-7 rounded-lg bg-white/10 group-hover:bg-brand-500 group-hover:text-white font-mono font-semibold text-xs flex items-center justify-center shrink-0 border border-white/10 transition-colors">
+              ${letters[optIdx]}
+            </span>
+            <span class="text-xs sm:text-sm font-medium text-white leading-relaxed">${optText}</span>
+          </div>
+          <div class="indicator-slot flex items-center justify-center shrink-0 ml-2">
+            <span class="text-[10px] font-mono text-slate-400 group-hover:text-slate-200 px-1.5 py-0.5 rounded bg-white/5 border border-white/10">[${optIdx + 1}]</span>
+          </div>
+        `;
+
+        btn.addEventListener('click', () => evaluateAnswer(optIdx));
+        DOM.optionsContainer.appendChild(btn);
+      });
+
+      updateLifelinesState();
+
+      if (ArenaState.mode !== 'blitz') {
+        if (ArenaState.timerEnabled) {
+          QuizTimer.startQuestionTimer();
+        } else {
+          DOM.countdownProgressBar.style.width = '100%';
+          DOM.hudTimerSeconds.textContent = '∞';
+        }
+      }
+    }
+
+    function evaluateAnswer(selectedIdx) {
+      if (ArenaState.isAnswerLocked) return;
+      ArenaState.isAnswerLocked = true;
+
+      if (ArenaState.mode !== 'blitz') {
+        ArenaState.clearTimers();
+      }
+
+      const q = ArenaState.activeDeck[ArenaState.currentIndex];
+      const isCorrect = selectedIdx === q.correctAnswer;
+      const elapsedSeconds = Math.max(0.2, (Date.now() - ArenaState.questionStartTime) / 1000);
+
+      if (isCorrect && elapsedSeconds < 3.0) {
+        AchievementsManager.unlock('SPEED_DEMON');
+      }
+
+      let multiplier = 1.0;
+      if (isCorrect) {
+        ArenaState.streak++;
+        ArenaState.scoreCount++;
+        if (ArenaState.streak > ArenaState.maxStreak) {
+          ArenaState.maxStreak = ArenaState.streak;
+        }
+
+        if (ArenaState.streak >= 8) multiplier = 4.0;
+        else if (ArenaState.streak >= 5) multiplier = 3.0;
+        else if (ArenaState.streak >= 3) multiplier = 2.0;
+        else if (ArenaState.streak >= 2) multiplier = 1.5;
+
+        const speedBonus = Math.max(0, Math.round((15 - elapsedSeconds) * 4));
+        const gainedPoints = Math.round((100 + speedBonus) * multiplier);
+        ArenaState.totalPoints += gainedPoints;
+
+        AudioEngine.playCorrect(ArenaState.streak);
+
+        if (ArenaState.streak >= 5) AchievementsManager.unlock('HOT_STREAK');
+        if (ArenaState.streak >= 8) AchievementsManager.unlock('UNTOUCHABLE');
+      } else {
+        ArenaState.streak = 0;
+        multiplier = 1.0;
+        AudioEngine.playWrong();
+      }
+
+      DOM.streakCounterValue.textContent = `${ArenaState.streak}x`;
+      DOM.streakMultiplierBadge.textContent = `${multiplier.toFixed(1)}x`;
+      DOM.hudPointsTotal.textContent = ArenaState.totalPoints;
+
+      ArenaState.history.push({
+        question: q,
+        selectedIdx: selectedIdx,
+        isCorrect: isCorrect,
+        timeSpent: elapsedSeconds,
+        timedOut: false
+      });
+
+      highlightOptionResults(selectedIdx, q.correctAnswer);
+      revealExplanation(isCorrect, q.explanation);
+
+      if (ArenaState.mode === 'survival' && !isCorrect) {
+        DOM.footerStatusHint.textContent = 'Sudden Death: Incorrect answer submitted.';
+        DOM.footerStatusHint.className = 'text-xs font-semibold text-rose-400';
+        DOM.nextActionLabel.textContent = 'View Final Results';
+        DOM.nextActionBtn.disabled = false;
+        return;
+      }
+
+      DOM.nextActionBtn.disabled = false;
+      DOM.nextActionBtn.focus();
+    }
+
+    function handleTimeout() {
+      if (ArenaState.isAnswerLocked) return;
+      ArenaState.isAnswerLocked = true;
+      AudioEngine.playWrong();
+
+      const q = ArenaState.activeDeck[ArenaState.currentIndex];
+      ArenaState.streak = 0;
+      DOM.streakCounterValue.textContent = '0x';
+      DOM.streakMultiplierBadge.textContent = '1.0x';
+
+      ArenaState.history.push({
+        question: q,
+        selectedIdx: null,
+        isCorrect: false,
+        timeSpent: ArenaState.timerDuration,
+        timedOut: true
+      });
+
+      highlightOptionResults(null, q.correctAnswer);
+      revealExplanation(false, q.explanation, true);
+
+      if (ArenaState.mode === 'survival') {
+        DOM.footerStatusHint.textContent = "Timer expired in Sudden Death mode.";
+        DOM.footerStatusHint.className = 'text-xs font-semibold text-rose-400';
+        DOM.nextActionLabel.textContent = 'View Final Results';
+      } else {
+        DOM.footerStatusHint.textContent = "Time expired for this question.";
+        DOM.footerStatusHint.className = 'text-xs font-semibold text-rose-400';
+      }
+
+      DOM.nextActionBtn.disabled = false;
+      DOM.nextActionBtn.focus();
+    }
+
+    function highlightOptionResults(selectedIdx, correctIdx) {
+      const buttons = DOM.optionsContainer.querySelectorAll('.option-btn');
+      buttons.forEach((btn, idx) => {
+        btn.disabled = true;
+        const iconSlot = btn.querySelector('.indicator-slot');
+
+        if (idx === correctIdx) {
+          btn.classList.remove('theme-subcard');
+          btn.classList.add('bg-brand-500/15', 'border-brand-500', 'ring-1', 'ring-brand-400');
+          iconSlot.innerHTML = `<span class="w-5 h-5 rounded-md bg-brand-500 text-white flex items-center justify-center font-bold text-xs">✓</span>`;
+        } else if (idx === selectedIdx) {
+          btn.classList.remove('theme-subcard');
+          btn.classList.add('bg-rose-500/15', 'border-rose-500', 'ring-1', 'ring-rose-400');
+          iconSlot.innerHTML = `<span class="w-5 h-5 rounded-md bg-rose-500 text-white flex items-center justify-center font-bold text-xs">✕</span>`;
+        } else {
+          btn.classList.add('opacity-30', 'cursor-not-allowed');
+        }
+      });
+    }
+
+    function revealExplanation(isCorrect, explanationText, timedOut = false) {
+      DOM.explanationBox.classList.remove('hidden');
+      if (timedOut) {
+        DOM.explanationHeading.textContent = 'Time Expired — Key Concept';
+        DOM.explanationHeading.className = 'text-xs font-mono font-bold uppercase tracking-wider text-amber-400 mb-1';
+      } else if (isCorrect) {
+        DOM.explanationHeading.textContent = 'Correct — Key Takeaway';
+        DOM.explanationHeading.className = 'text-xs font-mono font-bold uppercase tracking-wider text-brand-400 mb-1';
+      } else {
+        DOM.explanationHeading.textContent = 'Incorrect — Review Reference';
+        DOM.explanationHeading.className = 'text-xs font-mono font-bold uppercase tracking-wider text-rose-400 mb-1';
+      }
+      DOM.explanationBody.textContent = explanationText;
+    }
+
+    function activateFiftyFifty() {
+      if (ArenaState.isAnswerLocked || ArenaState.lifelines.fiftyFifty <= 0) return;
+      ArenaState.lifelines.fiftyFifty--;
+      AudioEngine.playLifeline();
+
+      const q = ArenaState.activeDeck[ArenaState.currentIndex];
+      const wrongIndices = [0, 1, 2, 3].filter(i => i !== q.correctAnswer);
+      const shuffledWrong = shuffleList(wrongIndices);
+      const toEliminate = shuffledWrong.slice(0, 2);
+
+      const buttons = DOM.optionsContainer.querySelectorAll('.option-btn');
+      toEliminate.forEach(idx => {
+        if (buttons[idx]) buttons[idx].classList.add('eliminated-option');
+      });
+
+      Toast.show('50:50 Applied', 'Two incorrect options have been removed.');
+      updateLifelinesState();
+    }
+
+    function activateFreeze() {
+      if (ArenaState.isAnswerLocked || ArenaState.lifelines.freeze <= 0) return;
+      ArenaState.lifelines.freeze--;
+      AudioEngine.playLifeline();
+      QuizTimer.applyFreeze(10);
+      updateLifelinesState();
+    }
+
+    function activateSkip() {
+      if (ArenaState.isAnswerLocked || ArenaState.lifelines.skip <= 0) return;
+      ArenaState.lifelines.skip--;
+      AudioEngine.playLifeline();
+      Toast.show('Question Skipped', 'Moved to the following item without penalty.');
+      updateLifelinesState();
+      advanceQuestion();
+    }
+
+    function updateLifelinesState() {
+      DOM.fiftyFiftyBtn.disabled = ArenaState.lifelines.fiftyFifty <= 0 || ArenaState.isAnswerLocked;
+      DOM.freezeBtn.disabled = ArenaState.lifelines.freeze <= 0 || ArenaState.isAnswerLocked || (!ArenaState.timerEnabled && ArenaState.mode !== 'blitz');
+      DOM.skipBtn.disabled = ArenaState.lifelines.skip <= 0 || ArenaState.isAnswerLocked;
+    }
+
+    function advanceQuestion() {
+      AudioEngine.playClick();
+
+      if (ArenaState.mode === 'survival') {
+        const last = ArenaState.history[ArenaState.history.length - 1];
+        if (last && !last.isCorrect) {
+          endGameSession();
+          return;
+        }
+      }
+
+      if (ArenaState.currentIndex < ArenaState.activeDeck.length - 1) {
+        ArenaState.currentIndex++;
+        renderQuestion(ArenaState.currentIndex);
+      } else {
+        if (ArenaState.mode === 'survival') {
+          ArenaState.activeDeck = ArenaState.activeDeck.concat(shuffleList(MASTER_QUESTIONS));
+          ArenaState.currentIndex++;
+          renderQuestion(ArenaState.currentIndex);
+        } else {
+          endGameSession();
+        }
+      }
+    }
+
+    function endGameSession() {
+      ArenaState.clearTimers();
+      const totalAnswered = ArenaState.history.length;
+      const correctCount = ArenaState.scoreCount;
+      const accuracyPct = totalAnswered > 0 ? Math.round((correctCount / totalAnswered) * 100) : 0;
+      const totalElapsed = (Date.now() - ArenaState.gameStartTime) / 1000;
+      const avgSpeed = totalAnswered > 0 ? (totalElapsed / totalAnswered).toFixed(1) : '0.0';
+
+      AchievementsManager.unlock('FIRST_WIN');
+      if (ArenaState.mode === 'classic' && accuracyPct === 100 && totalAnswered >= 5) {
+        AchievementsManager.unlock('PERFECT_SCORE');
+      }
+      if (ArenaState.mode === 'survival' && correctCount >= 8) {
+        AchievementsManager.unlock('SURVIVOR_LEGEND');
+      }
+      if (ArenaState.mode === 'blitz' && correctCount >= 8) {
+        AchievementsManager.unlock('BLITZ_FRENZY');
+      }
+      if (ArenaState.isPDFMode) {
+        AchievementsManager.unlock('PDF_SCHOLAR');
+      }
+
+      DOM.quizView.classList.add('hidden');
+      DOM.quizView.classList.remove('flex');
+      DOM.resultsView.classList.remove('hidden');
+      DOM.resultsView.classList.add('flex');
+
+      DOM.metricScoreFraction.textContent = `${correctCount} / ${totalAnswered}`;
+      DOM.metricPointsTotal.textContent = `${ArenaState.totalPoints} pts`;
+      DOM.metricMaxStreak.textContent = `${ArenaState.maxStreak}`;
+      DOM.metricAvgSpeed.textContent = `${avgSpeed}s`;
+      DOM.resultsAccuracyPct.textContent = `${accuracyPct}%`;
+
+      const ringOffset = 100 - accuracyPct;
+      setTimeout(() => {
+        DOM.resultsRadialCircle.style.strokeDashoffset = ringOffset;
+      }, 150);
+
+      if (accuracyPct >= 80) {
+        DOM.resultsTitle.textContent = 'High Proficiency Demonstrated';
+        DOM.resultsSubtitle.textContent = 'Consistent command of fundamental terminology and rapid reasoning.';
+        ConfettiSystem.burst();
+      } else if (accuracyPct >= 60) {
+        DOM.resultsTitle.textContent = 'Competent Comprehension';
+        DOM.resultsSubtitle.textContent = 'Good foundational grasp across topics with reliable pacing.';
+      } else {
+        DOM.resultsTitle.textContent = 'Review Recommended';
+        DOM.resultsSubtitle.textContent = 'Study the concept review items below to reinforce gaps.';
+      }
+
+      renderReviewCards('all');
+    }
+
+    function renderReviewCards(filter = 'all') {
+      DOM.reviewCardsList.innerHTML = '';
+      const hist = ArenaState.history;
+
+      const correctCount = hist.filter(h => h.isCorrect).length;
+      const wrongCount = hist.length - correctCount;
+
+      DOM.countAll.textContent = hist.length;
+      DOM.countCorrect.textContent = correctCount;
+      DOM.countWrong.textContent = wrongCount;
+
+      const filtered = hist.filter(h => {
+        if (filter === 'correct') return h.isCorrect;
+        if (filter === 'wrong') return !h.isCorrect;
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        DOM.reviewCardsList.innerHTML = '<div class="p-6 text-center text-slate-400 text-xs">No questions recorded in this filter.</div>';
+        return;
+      }
+
+      filtered.forEach(item => {
+        const q = item.question;
+        const userText = item.selectedIdx !== null ? q.options[item.selectedIdx] : 'No Answer (Expired)';
+        const correctText = q.options[q.correctAnswer];
+
+        const card = document.createElement('div');
+        card.className = `p-3.5 rounded-2xl border flex flex-col gap-2 ${
+          item.isCorrect ? 'bg-brand-500/10 border-brand-500/30' : 'bg-rose-500/10 border-rose-500/30'
+        }`;
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between text-[11px] font-mono">
+            <span class="px-2 py-0.5 rounded-md font-semibold uppercase ${item.isCorrect ? 'bg-brand-500/20 text-brand-300' : 'bg-rose-500/20 text-rose-300'}">
+              ${item.isCorrect ? 'Correct' : (item.timedOut ? 'Timed Out' : 'Missed')}
+            </span>
+            <span class="text-slate-400">${item.timeSpent.toFixed(1)}s • ${q.category}</span>
+          </div>
+
+          <h4 class="font-display font-medium text-xs sm:text-sm text-white leading-snug">${q.question}</h4>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            <div class="p-2.5 rounded-xl ${item.isCorrect ? 'bg-brand-500/15 text-brand-200' : 'bg-rose-500/15 text-rose-200'}">
+              <span class="block text-[10px] uppercase font-mono opacity-70">Submitted:</span>
+              <span class="font-medium">${userText}</span>
+            </div>
+            <div class="p-2.5 rounded-xl bg-brand-500/15 text-brand-200">
+              <span class="block text-[10px] uppercase font-mono opacity-70">Key Answer:</span>
+              <span class="font-medium">${correctText}</span>
+            </div>
+          </div>
+
+          <div class="text-xs text-slate-300 bg-black/20 p-2.5 rounded-xl border border-white/5">
+            <strong class="text-white">Explanation:</strong> ${q.explanation}
+          </div>
+        `;
+        DOM.reviewCardsList.appendChild(card);
+      });
+    }
+
+    function generateScorecardShare() {
+      const hist = ArenaState.history;
+      const total = hist.length;
+      const correct = ArenaState.scoreCount;
+      const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+      const text = `iReviewer Summary
+Mode: ${ArenaState.mode.toUpperCase()}
+Score: ${correct}/${total} (${pct}%)
+Max Streak: ${ArenaState.maxStreak} | Total Points: ${ArenaState.totalPoints} pts`;
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          Toast.show('Summary Copied', 'Metrics copied to clipboard.');
+        }).catch(() => fallbackCopy(text));
+      } else {
+        fallbackCopy(text);
+      }
+    }
+
+    function fallbackCopy(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        Toast.show('Summary Copied', 'Metrics copied to clipboard.');
+      } catch(e) {}
+      document.body.removeChild(ta);
+    }
+
+    function startArenaGame(overrideDeck = null) {
+      AudioEngine.playClick();
+      ArenaState.reset();
+      ArenaState.timerEnabled = DOM.timerToggleInput.checked;
+      ArenaState.shuffleEnabled = DOM.shuffleToggleInput.checked;
+      ArenaState.gameStartTime = Date.now();
+
+      let pool = [];
+      if (overrideDeck) {
+        pool = [...overrideDeck];
+        ArenaState.isPDFMode = true;
+      } else {
+        ArenaState.isPDFMode = false;
+        const selectedCategory = DOM.categorySelector.value;
+        if (selectedCategory === 'CUSTOM') {
+          pool = CustomDeckManager.getDeck();
+          if (pool.length === 0) {
+            Toast.show('Custom Deck Empty', 'Add questions using Deck Editor first.');
+            return;
+          }
+        } else if (selectedCategory === 'ALL') {
+          pool = [...MASTER_QUESTIONS];
+        } else {
+          pool = MASTER_QUESTIONS.filter(q => q.category === selectedCategory);
+        }
+      }
+
+      if (ArenaState.shuffleEnabled) {
+        pool = shuffleList(pool).map(q => {
+          const originalCorrect = q.options[q.correctAnswer];
+          const shuffledOpts = shuffleList(q.options);
+          return {
+            ...q,
+            options: shuffledOpts,
+            correctAnswer: shuffledOpts.indexOf(originalCorrect)
+          };
+        });
+      }
+
+      if (ArenaState.mode === 'classic' && !overrideDeck) {
+        const countSetting = ArenaState.requestedCount;
+        if (countSetting !== 'ALL') {
+          pool = pool.slice(0, Math.min(pool.length, parseInt(countSetting, 10)));
+        }
+      }
+
+      ArenaState.activeDeck = pool;
+      DOM.activeModeBadge.textContent = ArenaState.mode.toUpperCase();
+      DOM.hudModeSubtext.textContent = `${ArenaState.mode.toUpperCase()} EVALUATION`;
+
+      DOM.startView.classList.add('hidden');
+      DOM.resultsView.classList.add('hidden');
+      DOM.resultsView.classList.remove('flex');
+      DOM.quizView.classList.remove('hidden');
+      DOM.quizView.classList.add('flex');
+
+      if (ArenaState.mode === 'blitz') {
+        QuizTimer.startBlitzGlobalTimer();
+      }
+
+      renderQuestion(0);
+    }
+
+    function setupEventListeners() {
+      // Mode selector
+      document.querySelectorAll('.mode-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          AudioEngine.playClick();
+          document.querySelectorAll('.mode-tab-btn').forEach(b => {
+            b.classList.remove('active', 'border-2', 'border-brand-500', 'bg-brand-500/10');
+            b.classList.add('border-white/10', 'bg-white/5');
+          });
+          btn.classList.add('active', 'border-2', 'border-brand-500', 'bg-brand-500/10');
+          btn.classList.remove('border-white/10', 'bg-white/5');
+
+          ArenaState.mode = btn.dataset.mode;
+          DOM.countConfigContainer.style.display = (ArenaState.mode === 'classic') ? 'block' : 'none';
+          document.getElementById('timer-toggle-label').style.display = (ArenaState.mode === 'blitz') ? 'none' : 'flex';
+        });
+      });
+
+      // Count pills
+      document.querySelectorAll('.count-pill-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          AudioEngine.playClick();
+          document.querySelectorAll('.count-pill-btn').forEach(b => {
+            b.classList.remove('active', 'border-2', 'border-brand-500', 'bg-brand-500/20', 'text-white');
+            b.classList.add('border-white/10', 'bg-white/5');
+          });
+          btn.classList.add('active', 'border-2', 'border-brand-500', 'bg-brand-500/20', 'text-white');
+          btn.classList.remove('border-white/10', 'bg-white/5');
+          ArenaState.requestedCount = btn.dataset.count;
+        });
+      });
+
+      DOM.startGameBtn.addEventListener('click', () => startArenaGame());
+      DOM.replaySameBtn.addEventListener('click', () => startArenaGame(ArenaState.isPDFMode ? PDFReviewerEngine.currentPDFQuestions : null));
+      DOM.configureNewBtn.addEventListener('click', () => {
+        AudioEngine.playClick();
+        DOM.resultsView.classList.add('hidden');
+        DOM.resultsView.classList.remove('flex');
+        DOM.startView.classList.remove('hidden');
+      });
+
+      DOM.nextActionBtn.addEventListener('click', advanceQuestion);
+      DOM.fiftyFiftyBtn.addEventListener('click', activateFiftyFifty);
+      DOM.freezeBtn.addEventListener('click', activateFreeze);
+      DOM.skipBtn.addEventListener('click', activateSkip);
+      DOM.shareScorecardBtn.addEventListener('click', generateScorecardShare);
+
+      DOM.themeSelector.addEventListener('change', (e) => {
+        document.body.setAttribute('data-theme', e.target.value);
+        localStorage.setItem('devquiz_arena_theme', e.target.value);
+      });
+
+      DOM.soundToggleBtn.addEventListener('click', () => {
+        const next = !AudioEngine.isEnabled();
+        AudioEngine.toggleSound(next);
+        localStorage.setItem('devquiz_arena_sound', next);
+        if (next) {
+          DOM.soundOnIcon.classList.remove('hidden');
+          DOM.soundOffIcon.classList.add('hidden');
+          AudioEngine.playClick();
+        } else {
+          DOM.soundOnIcon.classList.add('hidden');
+          DOM.soundOffIcon.classList.remove('hidden');
+        }
+      });
+
+      DOM.reviewFilterContainer.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-filter]');
+        if (!btn) return;
+        AudioEngine.playClick();
+        DOM.reviewFilterContainer.querySelectorAll('button').forEach(b => {
+          b.classList.remove('bg-brand-600', 'text-white', 'font-semibold');
+          b.classList.add('text-slate-400');
+        });
+        btn.classList.add('bg-brand-600', 'text-white', 'font-semibold');
+        btn.classList.remove('text-slate-400');
+        renderReviewCards(btn.dataset.filter);
+      });
+
+      // Modals
+      document.getElementById('open-achievements-btn').addEventListener('click', () => {
+        AchievementsManager.renderModal();
+        DOM.achievementsModal.classList.remove('hidden');
+        DOM.achievementsModal.classList.add('flex');
+      });
+      document.getElementById('close-achievements-btn').addEventListener('click', () => {
+        DOM.achievementsModal.classList.add('hidden');
+        DOM.achievementsModal.classList.remove('flex');
+      });
+
+      document.getElementById('open-builder-btn').addEventListener('click', () => {
+        DOM.builderJsonArea.value = JSON.stringify(CustomDeckManager.getDeck(), null, 2);
+        CustomDeckManager.updateCount();
+        DOM.builderModal.classList.remove('hidden');
+        DOM.builderModal.classList.add('flex');
+      });
+      document.getElementById('close-builder-btn').addEventListener('click', () => {
+        DOM.builderModal.classList.add('hidden');
+        DOM.builderModal.classList.remove('flex');
+      });
+
+      // PDF Reviewer Listeners
+      const openPDFModal = () => {
+        DOM.pdfModal.classList.remove('hidden');
+        DOM.pdfModal.classList.add('flex');
+      };
+      DOM.openPdfBtn.addEventListener('click', openPDFModal);
+      DOM.bannerOpenPdfBtn.addEventListener('click', openPDFModal);
+      DOM.closePdfBtn.addEventListener('click', () => {
+        DOM.pdfModal.classList.add('hidden');
+        DOM.pdfModal.classList.remove('flex');
+      });
+
+      DOM.pdfDropZone.addEventListener('click', () => DOM.pdfFileInput.click());
+      DOM.pdfDropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        DOM.pdfDropZone.classList.add('border-brand-500');
+      });
+      DOM.pdfDropZone.addEventListener('dragleave', () => DOM.pdfDropZone.classList.remove('border-brand-500'));
+      DOM.pdfDropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        DOM.pdfDropZone.classList.remove('border-brand-500');
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          handleIncomingPDF(e.dataTransfer.files[0]);
+        }
+      });
+      DOM.pdfFileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          handleIncomingPDF(e.target.files[0]);
+        }
+      });
+
+      async function handleIncomingPDF(file) {
+        if (!file.name.toLowerCase().endsWith('.pdf')) {
+          Toast.show('Invalid Format', 'Please choose a standard .pdf file.');
+          return;
+        }
+
+        DOM.pdfDropZone.classList.add('hidden');
+        DOM.pdfLoadingState.classList.remove('hidden');
+        DOM.pdfResultsContainer.classList.add('hidden');
+        DOM.pdfResultsContainer.classList.remove('flex');
+
+        try {
+          const result = await PDFReviewerEngine.processFile(file);
+          DOM.pdfLoadingState.classList.add('hidden');
+          DOM.pdfResultsContainer.classList.remove('hidden');
+          DOM.pdfResultsContainer.classList.add('flex');
+
+          DOM.pdfStatPages.textContent = result.totalPages;
+          DOM.pdfStatConcepts.textContent = result.concepts.length;
+          DOM.pdfStatQuestions.textContent = result.questions.length;
+
+          renderPDFReviewerUI(result.concepts, result.questions);
+          Toast.show('Reviewer Generated', `Created ${result.concepts.length} key concepts from PDF.`);
+        } catch(err) {
+          DOM.pdfLoadingState.classList.add('hidden');
+          DOM.pdfDropZone.classList.remove('hidden');
+          Toast.show('PDF Parse Error', 'Could not extract text. Check that the PDF contains selectable text.');
+        }
+      }
+
+      function renderPDFReviewerUI(concepts, questions) {
+        DOM.pdfNotesList.innerHTML = '';
+        concepts.forEach(c => {
+          const card = document.createElement('div');
+          card.className = 'p-3 rounded-xl bg-white/5 border border-white/10 flex flex-col gap-1';
+          card.innerHTML = `
+            <span class="font-display font-semibold text-xs text-brand-300">${c.term}</span>
+            <p class="text-[11px] text-slate-300 leading-relaxed">${c.definition}</p>
+          `;
+          DOM.pdfNotesList.appendChild(card);
+        });
+
+        DOM.pdfQuestionsList.innerHTML = '';
+        questions.forEach((q, idx) => {
+          const item = document.createElement('div');
+          item.className = 'p-3 rounded-xl bg-white/5 border border-white/10 flex flex-col gap-1.5';
+          item.innerHTML = `
+            <span class="text-[10px] font-mono text-slate-400 uppercase">Item ${idx + 1}</span>
+            <p class="text-xs font-semibold text-white">${q.question}</p>
+            <div class="text-[11px] text-brand-400 font-mono">Answer: ${q.options[q.correctAnswer]}</div>
+          `;
+          DOM.pdfQuestionsList.appendChild(item);
+        });
+      }
+
+      DOM.tabReviewerNotes.addEventListener('click', () => {
+        DOM.tabReviewerNotes.classList.add('bg-brand-500/20', 'text-brand-300');
+        DOM.tabReviewerNotes.classList.remove('text-slate-400');
+        DOM.tabReviewerQuestions.classList.remove('bg-brand-500/20', 'text-brand-300');
+        DOM.tabReviewerQuestions.classList.add('text-slate-400');
+        DOM.pdfNotesList.classList.remove('hidden');
+        DOM.pdfQuestionsList.classList.add('hidden');
+        DOM.pdfQuestionsList.classList.remove('flex');
+      });
+
+      DOM.tabReviewerQuestions.addEventListener('click', () => {
+        DOM.tabReviewerQuestions.classList.add('bg-brand-500/20', 'text-brand-300');
+        DOM.tabReviewerQuestions.classList.remove('text-slate-400');
+        DOM.tabReviewerNotes.classList.remove('bg-brand-500/20', 'text-brand-300');
+        DOM.tabReviewerNotes.classList.add('text-slate-400');
+        DOM.pdfNotesList.classList.add('hidden');
+        DOM.pdfQuestionsList.classList.remove('hidden');
+        DOM.pdfQuestionsList.classList.add('flex');
+      });
+
+      DOM.launchPdfQuizBtn.addEventListener('click', () => {
+        if (PDFReviewerEngine.currentPDFQuestions.length === 0) {
+          Toast.show('Empty Deck', 'Could not generate sufficient questions from this PDF.');
+          return;
+        }
+        DOM.pdfModal.classList.add('hidden');
+        DOM.pdfModal.classList.remove('flex');
+        startArenaGame(PDFReviewerEngine.currentPDFQuestions);
+      });
+
+      // Builder Actions
+      DOM.builderAddQBtn.addEventListener('click', () => {
+        const qText = DOM.builderQText.value.trim();
+        const o0 = DOM.builderOpt0.value.trim();
+        const o1 = DOM.builderOpt1.value.trim();
+        const o2 = DOM.builderOpt2.value.trim();
+        const o3 = DOM.builderOpt3.value.trim();
+        const correct = parseInt(DOM.builderCorrectIdx.value, 10);
+        const cat = DOM.builderCategory.value.trim() || 'Custom';
+        const exp = DOM.builderExplanation.value.trim() || 'Custom created question.';
+
+        if (!qText || !o0 || !o1 || !o2 || !o3) {
+          Toast.show('Incomplete Fields', 'Please fill out the prompt and all 4 options.');
+          return;
+        }
+
+        const deck = CustomDeckManager.getDeck();
+        deck.push({
+          id: Date.now(),
+          category: cat,
+          question: qText,
+          options: [o0, o1, o2, o3],
+          correctAnswer: correct,
+          explanation: exp
+        });
+
+        CustomDeckManager.saveDeck(deck);
+        Toast.show('Saved to Deck', 'Question appended successfully.');
+
+        DOM.builderQText.value = '';
+        DOM.builderOpt0.value = '';
+        DOM.builderOpt1.value = '';
+        DOM.builderOpt2.value = '';
+        DOM.builderOpt3.value = '';
+        DOM.builderExplanation.value = '';
+        DOM.builderJsonArea.value = JSON.stringify(deck, null, 2);
+      });
+
+      DOM.builderExportBtn.addEventListener('click', () => {
+        const json = JSON.stringify(CustomDeckManager.getDeck(), null, 2);
+        fallbackCopy(json);
+      });
+
+      DOM.builderImportBtn.addEventListener('click', () => {
+        try {
+          const parsed = JSON.parse(DOM.builderJsonArea.value);
+          if (Array.isArray(parsed)) {
+            CustomDeckManager.saveDeck(parsed);
+            Toast.show('Deck Imported', `${parsed.length} questions loaded.`);
+          } else {
+            Toast.show('Import Error', 'JSON must be an array.');
+          }
+        } catch(e) {
+          Toast.show('JSON Syntax Error', 'Please verify your JSON format.');
+        }
+      });
+
+      DOM.builderClearBtn.addEventListener('click', () => {
+        CustomDeckManager.saveDeck([]);
+        DOM.builderJsonArea.value = '[]';
+        Toast.show('Deck Cleared', 'Custom question bank reset.');
+      });
+
+      DOM.navBrandBtn.addEventListener('click', () => {
+        if (!DOM.quizView.classList.contains('hidden')) {
+          DOM.quizView.classList.add('hidden');
+          DOM.resultsView.classList.add('hidden');
+          DOM.startView.classList.remove('hidden');
+          ArenaState.clearTimers();
+        }
+      });
+
+      // Keyboard Controls
+      window.addEventListener('keydown', (e) => {
+        if (DOM.quizView.classList.contains('hidden')) return;
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        if (e.key === ' ' || e.key === 'Spacebar') e.preventDefault();
+
+        if (!ArenaState.isAnswerLocked) {
+          const keyMap = {
+            '1': 0, '2': 1, '3': 2, '4': 3,
+            'a': 0, 'b': 1, 'c': 2, 'd': 3,
+            'A': 0, 'B': 1, 'C': 2, 'D': 3
+          };
+          if (e.key in keyMap) {
+            e.preventDefault();
+            evaluateAnswer(keyMap[e.key]);
+            return;
+          }
+
+          if (e.key === 'f' || e.key === 'F') {
+            activateFiftyFifty();
+            return;
+          }
+          if (e.key === 't' || e.key === 'T') {
+            activateFreeze();
+            return;
+          }
+          if (e.key === 's' || e.key === 'S') {
+            activateSkip();
+            return;
+          }
+        }
+
+        if (ArenaState.isAnswerLocked && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          advanceQuestion();
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('devquiz_arena_theme') || 'violet';
+      document.body.setAttribute('data-theme', savedTheme);
+      DOM.themeSelector.value = savedTheme;
+
+      const savedSound = localStorage.getItem('devquiz_arena_sound');
+      if (savedSound !== null) {
+        const enabled = savedSound === 'true';
+        AudioEngine.toggleSound(enabled);
+        if (!enabled) {
+          DOM.soundOnIcon.classList.add('hidden');
+          DOM.soundOffIcon.classList.remove('hidden');
+        }
+      }
+
+      AchievementsManager.updatePill();
+      CustomDeckManager.updateCount();
+      CustomDeckManager.refreshCategoryDropdown();
+      setupEventListeners();
+    });
+  </script>
+</body>
+</html>
