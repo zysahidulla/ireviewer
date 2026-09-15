@@ -2,9 +2,7 @@
 <html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>iReviewer</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -20,9 +18,6 @@
       darkMode: 'class',
       theme: {
         extend: {
-          screens: {
-            'xs': '390px',
-          },
           fontFamily: {
             sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
             display: ['Inter', 'system-ui', 'sans-serif'],
@@ -135,27 +130,34 @@
       border-color: #d1d5db !important;
     }
 
-    [data-theme="light"] .text-slate-300 { color: #475569 !important; }
-    [data-theme="light"] .text-slate-400 { color: #64748b !important; }
-    [data-theme="light"] .text-slate-500 { color: #64748b !important; }
-    [data-theme="light"] [class~="bg-white/5"] { background-color: rgba(15, 23, 42, 0.04) !important; }
-    [data-theme="light"] [class~="bg-white/10"] { background-color: rgba(15, 23, 42, 0.08) !important; }
-    [data-theme="light"] [class~="bg-black/30"],
-    [data-theme="light"] [class~="bg-black/40"] { background-color: #ffffff !important; }
-    [data-theme="light"] [class~="border-white/10"],
-    [data-theme="light"] [class~="border-white/15"] { border-color: #cbd5e1 !important; }
-
-    /* Mobile & Touch Optimizations */
-    * {
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
+    [data-theme="light"] .text-slate-300 {
+      color: #475569 !important;
     }
 
-    /* Prevent mobile browser zoom on form focus */
-    @media (max-width: 768px) {
-      input, select, textarea {
-        font-size: 16px !important;
-      }
+    [data-theme="light"] .text-slate-400 {
+      color: #64748b !important;
+    }
+
+    [data-theme="light"] .text-slate-500 {
+      color: #64748b !important;
+    }
+
+    [data-theme="light"] [class~="bg-white/5"] {
+      background-color: rgba(15, 23, 42, 0.04) !important;
+    }
+
+    [data-theme="light"] [class~="bg-white/10"] {
+      background-color: rgba(15, 23, 42, 0.08) !important;
+    }
+
+    [data-theme="light"] [class~="bg-black/30"],
+    [data-theme="light"] [class~="bg-black/40"] {
+      background-color: #ffffff !important;
+    }
+
+    [data-theme="light"] [class~="border-white/10"],
+    [data-theme="light"] [class~="border-white/15"] {
+      border-color: #cbd5e1 !important;
     }
 
     body {
@@ -165,12 +167,6 @@
       background-attachment: fixed;
       color: var(--text-main);
       transition: background-color 0.25s ease, color 0.25s ease;
-      min-height: 100vh;
-      min-height: -webkit-fill-available;
-      padding-top: env(safe-area-inset-top, 0px);
-      padding-bottom: env(safe-area-inset-bottom, 0px);
-      padding-left: env(safe-area-inset-left, 0px);
-      padding-right: env(safe-area-inset-right, 0px);
     }
 
     .theme-card {
@@ -199,10 +195,10 @@
       box-shadow: 0 8px 18px -4px var(--accent-glow);
     }
     .option-btn:not(:disabled):active {
-      transform: scale(0.98);
+      transform: translateY(0);
     }
 
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.05); }
     ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.25); border-radius: 9999px; }
 
@@ -220,63 +216,63 @@
 
 <body class="h-full font-sans antialiased flex flex-col selection:bg-brand-500 selection:text-white relative overflow-x-hidden" data-theme="violet">
   <canvas id="confetti-canvas"></canvas>
-  <div id="toast-container" class="fixed top-4 sm:top-auto sm:bottom-6 left-4 right-4 sm:left-auto sm:right-6 z-50 flex flex-col gap-2 pointer-events-none max-w-sm sm:w-full mx-auto sm:mx-0"></div>
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-full"></div>
 
   <!-- Main Navigation Header -->
-  <header class="w-full border-b border-white/10 bg-slate-950/60 backdrop-blur-md sticky top-0 z-40 transition-colors">
-    <div class="max-w-6xl mx-auto px-3 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-2">
+  <header class="w-full border-b border-white/10 bg-slate-950/40 backdrop-blur-md sticky top-0 z-40 transition-colors">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
       <!-- App Identity -->
-      <div class="flex items-center gap-2 sm:gap-3 cursor-pointer select-none shrink-0" id="nav-brand-btn">
-        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-brand-700 via-brand-600 to-brand-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20 shrink-0">
-          <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="flex items-center gap-3 cursor-pointer select-none" id="nav-brand-btn">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-700 via-brand-600 to-brand-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
           </svg>
         </div>
         <div>
           <div class="flex items-center gap-1.5">
-            <h1 class="font-display font-extrabold text-sm sm:text-base tracking-tight leading-none text-white">iReviewer</h1>
-            <span id="active-mode-badge" class="px-1.5 py-0.2 sm:px-2 sm:py-0.5 text-[9px] sm:text-[10px] font-mono font-semibold uppercase rounded bg-brand-500/15 text-brand-300 border border-brand-500/30">Classic</span>
+            <h1 class="font-display font-extrabold text-base tracking-tight leading-none text-white">iReviewer</h1>
+            <span id="active-mode-badge" class="px-2 py-0.5 text-[10px] font-mono font-semibold uppercase rounded bg-brand-500/15 text-brand-300 border border-brand-500/30">Classic</span>
           </div>
-          <p class="text-[10px] sm:text-[11px] text-slate-400 font-medium hidden xs:block">Reviewer &amp; Quiz Maker</p>
+          <p class="text-[11px] text-slate-400 font-medium">Reviewer &amp; Quiz Maker</p>
         </div>
       </div>
 
-      <!-- Action Group -->
-      <div class="flex items-center gap-1.5 sm:gap-2">
-        <!-- PDF Reviewer Trigger -->
-        <button id="open-pdf-btn" class="min-h-[36px] px-2 sm:px-3 py-1.5 rounded-xl bg-brand-600/15 hover:bg-brand-600/25 active:scale-95 border border-brand-500/30 text-brand-300 text-xs font-semibold flex items-center gap-1.5 transition-all" title="Upload PDF">
+      <div class="flex items-center gap-2 sm:gap-2.5">
+        <!-- PDF Reviewer Feature Trigger -->
+        <button id="open-pdf-btn" class="px-2.5 py-1.5 sm:px-3 rounded-xl bg-brand-600/15 hover:bg-brand-600/25 border border-brand-500/30 text-brand-300 text-xs font-semibold flex items-center gap-1.5 transition-all">
           <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          <span class="hidden md:inline">PDF</span>
+          <span class="hidden sm:inline">PDF Reviewer</span>
         </button>
 
         <!-- Custom Deck Builder Button -->
-        <button id="open-builder-btn" class="min-h-[36px] p-2 sm:px-3 sm:py-1.5 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all" title="Deck Editor">
+        <button id="open-builder-btn" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition-all">
           <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
           </svg>
-          <span class="hidden md:inline">Editor</span>
+          <span class="hidden sm:inline">Deck Editor</span>
         </button>
 
         <!-- Achievements Button -->
-        <button id="open-achievements-btn" class="min-h-[36px] p-2 sm:px-2.5 sm:py-1.5 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 text-slate-300 hover:text-brand-300 text-xs font-semibold flex items-center gap-1 transition-all" title="Achievements">
+        <button id="open-achievements-btn" class="p-2 sm:px-3 sm:py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-brand-300 text-xs font-semibold flex items-center gap-1.5 transition-all">
           <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
           </svg>
-          <span id="badges-unlocked-pill" class="px-1 py-0.2 rounded-full bg-brand-500/15 text-brand-300 font-mono text-[9px] sm:text-[10px]">0/8</span>
+          <span class="hidden sm:inline">Badges</span>
+          <span id="badges-unlocked-pill" class="px-1.5 py-0.2 rounded-full bg-brand-500/15 text-brand-300 font-mono text-[10px]">0/8</span>
         </button>
 
         <!-- Theme Selector -->
-        <select id="theme-selector" class="min-h-[36px] px-2 sm:px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-xs font-semibold cursor-pointer outline-none focus:ring-2 focus:ring-brand-500 max-w-[85px] sm:max-w-none">
+        <select id="theme-selector" class="p-2 sm:px-2.5 sm:py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-xs font-semibold cursor-pointer outline-none focus:ring-2 focus:ring-brand-500">
           <option value="violet" class="bg-stone-900 text-white">Animo Dark</option>
           <option value="oled" class="bg-black text-white">Pure OLED</option>
-          <option value="arcade" class="bg-stone-950 text-emerald-400">Emerald</option>
-          <option value="light" class="bg-slate-100 text-slate-900">Light</option>
+          <option value="arcade" class="bg-stone-950 text-emerald-400">Emerald Glow</option>
+          <option value="light" class="bg-slate-100 text-slate-900">Animo Light</option>
         </select>
 
         <!-- Sound Synthesizer Toggle -->
-        <button id="sound-toggle-btn" class="min-h-[36px] min-w-[36px] p-2 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 text-slate-300 hover:text-white transition-colors flex items-center justify-center" title="Toggle Audio FX">
+        <button id="sound-toggle-btn" class="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition-colors" title="Toggle Audio FX">
           <svg id="sound-on-icon" class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
           </svg>
@@ -288,26 +284,26 @@
     </div>
   </header>
 
-  <main class="flex-1 max-w-4xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-8 flex flex-col justify-center">
+  <main class="flex-1 max-w-4xl w-full mx-auto px-4 py-6 sm:py-8 flex flex-col justify-center">
 
     <!-- ==================== VIEW 1: START & CONFIG SCREEN ==================== -->
-    <section id="start-view" class="w-full theme-card rounded-2xl sm:rounded-3xl p-4 sm:p-8 md:p-10 animate-pop relative overflow-hidden">
-      <div class="text-center mb-6 sm:mb-8">
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-mono font-medium uppercase tracking-[0.2em] bg-brand-500/10 text-brand-400 border border-brand-500/20 mb-3">
-          <span class="w-1.5 h-1.5 rounded-full bg-brand-400 inline-block animate-pulse"></span>
+    <section id="start-view" class="w-full theme-card rounded-3xl p-6 sm:p-10 animate-pop relative overflow-hidden">
+      <div class="text-center mb-8">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-mono font-medium uppercase tracking-[0.2em] bg-brand-500/10 text-brand-400 border border-brand-500/20 mb-3">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-400 inline-block"></span>
           Multiple Choice Quiz Cards
         </span>
-        <h2 class="text-2xl sm:text-4xl lg:text-5xl font-display font-black tracking-tight mb-2 sm:mb-3 text-white leading-tight">
+        <h2 class="text-3xl sm:text-4xl lg:text-5xl font-display font-black tracking-tight mb-3 text-white leading-tight">
           Study and Practice with<br class="hidden sm:inline">
-          <span> iReviewer</span>
+          <span class=""> iReviewer</span>
         </h2>
         <p class="text-slate-400 max-w-lg mx-auto text-xs sm:text-sm">
-          Select an evaluation mode, import materials via PDF, or choose from curated domain questions.
+          Select an evaluation mode, import study materials via PDF, or choose from curated domain questions.
         </p>
       </div>
 
       <!-- Quick PDF Reviewer Highlight Banner -->
-      <div class="mb-6 sm:mb-8 p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-brand-600/15 via-brand-500/5 to-transparent border border-brand-500/30 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div class="mb-8 p-4 rounded-2xl bg-gradient-to-r from-brand-600/15 via-brand-500/5 to-transparent border border-brand-500/30 flex flex-col sm:flex-row items-center justify-between gap-3">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-brand-600/20 text-brand-400 flex items-center justify-center shrink-0 border border-brand-500/30">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -315,11 +311,11 @@
             </svg>
           </div>
           <div>
-            <h4 class="text-xs sm:text-sm font-display font-bold text-white">Have your own notes or reviewer?</h4>
-            <p class="text-[11px] sm:text-xs text-slate-400">Import a PDF to generate flashcards and a practice quiz.</p>
+            <h4 class="text-sm font-display font-bold text-white">Have your own notes or syllabus?</h4>
+            <p class="text-xs text-slate-400">Upload a PDF to instantly extract notes, flashcards, and a generated reviewer quiz.</p>
           </div>
         </div>
-        <button id="banner-open-pdf-btn" class="min-h-[44px] px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 active:scale-98 text-white font-semibold text-xs transition-all shrink-0 flex items-center justify-center gap-2 shadow-sm">
+        <button id="banner-open-pdf-btn" class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs transition-all shrink-0 flex items-center gap-2 shadow-sm">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
@@ -328,51 +324,51 @@
       </div>
 
       <!-- Mode Selector Tabs -->
-      <div class="mb-6 sm:mb-8">
-        <label class="block text-xs font-mono font-semibold uppercase tracking-wider text-slate-400 mb-2 sm:mb-3">Evaluation Mode</label>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
+      <div class="mb-8">
+        <label class="block text-xs font-mono font-semibold uppercase tracking-wider text-slate-400 mb-3">Evaluation Mode</label>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <!-- Classic Mode -->
-          <button type="button" class="mode-tab-btn active p-3.5 sm:p-4 rounded-2xl border-2 border-brand-500 bg-brand-500/10 text-left transition-all active:scale-[0.99]" data-mode="classic">
-            <div class="flex items-center justify-between mb-1">
+          <button type="button" class="mode-tab-btn active p-4 rounded-2xl border-2 border-brand-500 bg-brand-500/10 text-left transition-all" data-mode="classic">
+            <div class="flex items-center justify-between mb-1.5">
               <span class="font-display font-bold text-sm text-white">Standard Review</span>
-              <svg class="w-4 h-4 text-brand-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <circle cx="12" cy="12" r="9" stroke-width="2" />
                 <circle cx="12" cy="12" r="5" stroke-width="2" />
                 <circle cx="12" cy="12" r="1" fill="currentColor" />
               </svg>
             </div>
-            <p class="text-[11px] sm:text-xs text-slate-400 leading-snug">Configurable question count and optional per-question response countdown.</p>
+            <p class="text-xs text-slate-400 leading-snug">Configurable question count and optional per-question response timer.</p>
           </button>
 
           <!-- Survival Mode -->
-          <button type="button" class="mode-tab-btn p-3.5 sm:p-4 rounded-2xl border-2 border-white/10 bg-white/5 text-left transition-all hover:border-white/20 active:scale-[0.99]" data-mode="survival">
-            <div class="flex items-center justify-between mb-1">
+          <button type="button" class="mode-tab-btn p-4 rounded-2xl border-2 border-white/10 bg-white/5 text-left transition-all hover:border-white/20" data-mode="survival">
+            <div class="flex items-center justify-between mb-1.5">
               <span class="font-display font-bold text-sm text-white">Sudden Death</span>
-              <svg class="w-4 h-4 text-rose-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
             </div>
-            <p class="text-[11px] sm:text-xs text-slate-400 leading-snug">Strict survival session. Test terminates immediately upon the first wrong answer.</p>
+            <p class="text-xs text-slate-400 leading-snug">Strict survival session. Test ends immediately upon the first wrong answer.</p>
           </button>
 
           <!-- 60s Blitz Mode -->
-          <button type="button" class="mode-tab-btn p-3.5 sm:p-4 rounded-2xl border-2 border-white/10 bg-white/5 text-left transition-all hover:border-white/20 active:scale-[0.99]" data-mode="blitz">
-            <div class="flex items-center justify-between mb-1">
+          <button type="button" class="mode-tab-btn p-4 rounded-2xl border-2 border-white/10 bg-white/5 text-left transition-all hover:border-white/20" data-mode="blitz">
+            <div class="flex items-center justify-between mb-1.5">
               <span class="font-display font-bold text-sm text-white">60s Speedrun</span>
-              <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <p class="text-[11px] sm:text-xs text-slate-400 leading-snug">One minute global timer. Answer as many questions correctly as possible.</p>
+            <p class="text-xs text-slate-400 leading-snug">One minute global timer. Answer as many questions correctly as possible.</p>
           </button>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-5 mb-6 sm:mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
         <!-- Category Selection -->
-        <div class="p-3.5 sm:p-4 rounded-2xl theme-subcard">
+        <div class="p-4 rounded-2xl theme-subcard">
           <label class="block text-xs font-mono font-semibold uppercase tracking-wider text-slate-400 mb-2">Subject / Deck</label>
-          <select id="category-selector" class="w-full min-h-[44px] p-2.5 sm:p-3 rounded-xl bg-black/30 border border-white/15 text-sm font-semibold text-white outline-none focus:ring-2 focus:ring-brand-500">
+          <select id="category-selector" class="w-full p-3 rounded-xl bg-black/30 border border-white/15 text-sm font-semibold text-white outline-none focus:ring-2 focus:ring-brand-500">
             <option value="ALL">All Curated Categories</option>
             <option value="Tech & Web">Software &amp; Web Systems</option>
             <option value="Science & Cosmos">Physics &amp; Natural Science</option>
@@ -382,40 +378,40 @@
         </div>
 
         <!-- Question Count (Classic only) -->
-        <div id="count-config-container" class="p-3.5 sm:p-4 rounded-2xl theme-subcard">
+        <div id="count-config-container" class="p-4 rounded-2xl theme-subcard">
           <label class="block text-xs font-mono font-semibold uppercase tracking-wider text-slate-400 mb-2">Deck Size</label>
-          <div class="grid grid-cols-4 gap-1.5 sm:gap-2">
-            <button type="button" class="count-pill-btn min-h-[44px] p-2 rounded-xl text-xs font-mono font-bold border border-white/10 bg-white/5 active:scale-95 hover:border-brand-500 transition-all" data-count="5">5 Qs</button>
-            <button type="button" class="count-pill-btn active min-h-[44px] p-2 rounded-xl text-xs font-mono font-bold border-2 border-brand-500 bg-brand-500/20 text-white active:scale-95 transition-all" data-count="10">10 Qs</button>
-            <button type="button" class="count-pill-btn min-h-[44px] p-2 rounded-xl text-xs font-mono font-bold border border-white/10 bg-white/5 active:scale-95 hover:border-brand-500 transition-all" data-count="15">15 Qs</button>
-            <button type="button" class="count-pill-btn min-h-[44px] p-2 rounded-xl text-xs font-mono font-bold border border-white/10 bg-white/5 active:scale-95 hover:border-brand-500 transition-all" data-count="ALL">All</button>
+          <div class="grid grid-cols-4 gap-2">
+            <button type="button" class="count-pill-btn p-2 rounded-xl text-xs font-mono font-bold border border-white/10 bg-white/5 hover:border-brand-500" data-count="5">5 Qs</button>
+            <button type="button" class="count-pill-btn active p-2 rounded-xl text-xs font-mono font-bold border-2 border-brand-500 bg-brand-500/20 text-white" data-count="10">10 Qs</button>
+            <button type="button" class="count-pill-btn p-2 rounded-xl text-xs font-mono font-bold border border-white/10 bg-white/5 hover:border-brand-500" data-count="15">15 Qs</button>
+            <button type="button" class="count-pill-btn p-2 rounded-xl text-xs font-mono font-bold border border-white/10 bg-white/5 hover:border-brand-500" data-count="ALL">All</button>
           </div>
         </div>
       </div>
 
       <!-- Settings & Assist Utilities -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-3.5 sm:p-4 rounded-2xl theme-subcard mb-6 sm:mb-8">
-        <div class="flex flex-col xs:flex-row items-start xs:items-center gap-3 sm:gap-6">
-          <label id="timer-toggle-label" class="flex items-center gap-2.5 cursor-pointer select-none text-xs sm:text-sm font-medium py-1">
-            <input type="checkbox" id="timer-toggle-input" checked class="w-5 h-5 rounded text-brand-500 focus:ring-brand-400 border-white/20 bg-black/40">
+      <div class="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl theme-subcard mb-8">
+        <div class="flex items-center gap-6">
+          <label id="timer-toggle-label" class="flex items-center gap-2 cursor-pointer select-none text-xs sm:text-sm font-medium">
+            <input type="checkbox" id="timer-toggle-input" checked class="w-4 h-4 rounded text-brand-500 focus:ring-brand-400 border-white/20 bg-black/40">
             <span>15s Question Countdown</span>
           </label>
-          <label class="flex items-center gap-2.5 cursor-pointer select-none text-xs sm:text-sm font-medium py-1">
-            <input type="checkbox" id="shuffle-toggle-input" checked class="w-5 h-5 rounded text-brand-500 focus:ring-brand-400 border-white/20 bg-black/40">
+          <label class="flex items-center gap-2 cursor-pointer select-none text-xs sm:text-sm font-medium">
+            <input type="checkbox" id="shuffle-toggle-input" checked class="w-4 h-4 rounded text-brand-500 focus:ring-brand-400 border-white/20 bg-black/40">
             <span>Randomize Order</span>
           </label>
         </div>
 
-        <div class="flex items-center gap-1.5 text-[11px] sm:text-xs font-mono text-slate-400 pt-2 sm:pt-0 border-t sm:border-t-0 border-white/5">
+        <div class="flex items-center gap-2 text-xs font-mono text-slate-400">
           <span>Assists:</span>
-          <span class="px-2 py-0.5 rounded bg-white/5 text-slate-300 border border-white/10">50:50</span>
-          <span class="px-2 py-0.5 rounded bg-white/5 text-slate-300 border border-white/10">Freeze</span>
-          <span class="px-2 py-0.5 rounded bg-white/5 text-slate-300 border border-white/10">Skip</span>
+          <span class="px-2 py-0.5 rounded bg-white/5 text-slate-300 border border-white/10">50:50 [F]</span>
+          <span class="px-2 py-0.5 rounded bg-white/5 text-slate-300 border border-white/10">Freeze [T]</span>
+          <span class="px-2 py-0.5 rounded bg-white/5 text-slate-300 border border-white/10">Skip [S]</span>
         </div>
       </div>
 
       <!-- Big CTA Start Button -->
-      <button id="start-game-btn" class="w-full min-h-[50px] py-3.5 px-8 rounded-2xl bg-brand-600 hover:bg-brand-500 active:scale-[0.98] text-white font-display font-bold text-sm sm:text-base shadow-lg shadow-brand-600/25 transition-all flex items-center justify-center gap-2.5">
+      <button id="start-game-btn" class="w-full py-3.5 px-8 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white font-display font-bold text-base shadow-lg shadow-brand-600/25 transition-all flex items-center justify-center gap-2.5">
         <span>Start Evaluation Session</span>
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -424,72 +420,74 @@
     </section>
 
     <!-- ==================== VIEW 2: ACTIVE GAMEPLAY ARENA ==================== -->
-    <section id="quiz-view" class="w-full hidden flex-col gap-3 sm:gap-4 animate-pop">
+    <section id="quiz-view" class="w-full hidden flex-col gap-4 animate-pop">
       <!-- Real-time HUD Status Bar -->
-      <div class="theme-card rounded-2xl p-3 sm:p-5 grid grid-cols-3 sm:flex sm:items-center sm:justify-between gap-2 sm:gap-3">
+      <div class="theme-card rounded-2xl p-4 sm:p-5 flex flex-wrap items-center justify-between gap-3">
         <!-- Question Tracker -->
-        <div class="flex flex-col">
-          <span id="hud-mode-subtext" class="text-[9px] sm:text-[10px] font-mono uppercase tracking-wider text-slate-400 truncate">Standard Review</span>
-          <span id="hud-progress-counter" class="font-display font-extrabold text-xs sm:text-base text-white">Q 1 / 10</span>
+        <div class="flex items-center gap-3">
+          <div class="flex flex-col">
+            <span id="hud-mode-subtext" class="text-[10px] font-mono uppercase tracking-wider text-slate-400">Standard Review</span>
+            <span id="hud-progress-counter" class="font-display font-extrabold text-base text-white">Question 1 / 10</span>
+          </div>
         </div>
 
         <!-- Streak Gauge -->
-        <div class="flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-white/5 border border-white/10">
-          <svg id="streak-fire-icon" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-400 transition-transform shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10">
+          <svg id="streak-fire-icon" class="w-4 h-4 text-brand-400 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
           </svg>
           <div class="flex flex-col leading-tight">
-            <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 uppercase">Streak</span>
+            <span class="text-[10px] font-mono text-slate-400 uppercase">Streak</span>
             <div class="flex items-baseline gap-1">
-              <span id="streak-counter-value" class="font-bold text-[11px] sm:text-xs text-brand-400">0x</span>
-              <span id="streak-multiplier-badge" class="text-[8px] sm:text-[9px] font-mono px-1 rounded bg-brand-500/20 text-brand-300 font-semibold">1.0x</span>
+              <span id="streak-counter-value" class="font-bold text-xs text-brand-400">0x</span>
+              <span id="streak-multiplier-badge" class="text-[9px] font-mono px-1 py-0.2 rounded bg-brand-500/20 text-brand-300 font-semibold">1.0x</span>
             </div>
           </div>
         </div>
 
         <!-- Score Points Counter -->
         <div class="flex flex-col items-end leading-tight">
-          <span class="text-[9px] sm:text-[10px] font-mono uppercase tracking-wider text-slate-400">Score</span>
-          <div class="flex items-baseline gap-0.5 sm:gap-1">
-            <span id="hud-points-total" class="font-display font-bold text-sm sm:text-lg text-brand-400">0</span>
-            <span class="text-[9px] sm:text-[11px] text-slate-400 font-mono">pts</span>
+          <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400">Score</span>
+          <div class="flex items-baseline gap-1">
+            <span id="hud-points-total" class="font-display font-bold text-lg text-brand-400">0</span>
+            <span class="text-[11px] text-slate-400 font-mono">pts</span>
           </div>
         </div>
       </div>
 
       <!-- Assist Utilities Bar -->
-      <div class="flex flex-col xs:flex-row items-stretch xs:items-center justify-between gap-2 px-0.5">
-        <div class="grid grid-cols-3 gap-1.5 sm:gap-2 flex-1 sm:flex-initial">
+      <div class="flex items-center justify-between gap-2 px-1">
+        <div class="flex items-center gap-2">
           <!-- 50:50 Assist -->
-          <button id="lifeline-fifty-btn" class="min-h-[40px] px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 text-[11px] sm:text-xs font-medium text-slate-300 hover:text-white flex items-center justify-center gap-1.5 transition-all disabled:opacity-30 disabled:pointer-events-none" title="Eliminate 2 wrong answers">
-            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button id="lifeline-fifty-btn" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-300 hover:text-white flex items-center gap-1.5 transition-all disabled:opacity-30 disabled:pointer-events-none" title="Eliminate 2 wrong answers (Shortcut: F)">
+            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z" />
             </svg>
             <span>50:50</span>
-            <span class="text-[9px] font-mono opacity-60 hidden md:inline">[F]</span>
+            <span class="text-[10px] font-mono opacity-60 hidden sm:inline">[F]</span>
           </button>
 
           <!-- Freeze Time Assist -->
-          <button id="lifeline-freeze-btn" class="min-h-[40px] px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 text-[11px] sm:text-xs font-medium text-slate-300 hover:text-white flex items-center justify-center gap-1.5 transition-all disabled:opacity-30 disabled:pointer-events-none" title="Freeze Timer for 10s">
-            <svg class="w-3.5 h-3.5 text-brand-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button id="lifeline-freeze-btn" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-300 hover:text-white flex items-center gap-1.5 transition-all disabled:opacity-30 disabled:pointer-events-none" title="Freeze Timer for 10s (Shortcut: T)">
+            <svg class="w-3.5 h-3.5 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span>Freeze</span>
-            <span class="text-[9px] font-mono opacity-60 hidden md:inline">[T]</span>
+            <span>Pause Timer</span>
+            <span class="text-[10px] font-mono opacity-60 hidden sm:inline">[T]</span>
           </button>
 
           <!-- Skip Question Assist -->
-          <button id="lifeline-skip-btn" class="min-h-[40px] px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 active:scale-95 border border-white/10 text-[11px] sm:text-xs font-medium text-slate-300 hover:text-white flex items-center justify-center gap-1.5 transition-all disabled:opacity-30 disabled:pointer-events-none" title="Skip question without penalty">
-            <svg class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button id="lifeline-skip-btn" class="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-medium text-slate-300 hover:text-white flex items-center gap-1.5 transition-all disabled:opacity-30 disabled:pointer-events-none" title="Skip question without penalty (Shortcut: S)">
+            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
             </svg>
             <span>Skip</span>
-            <span class="text-[9px] font-mono opacity-60 hidden md:inline">[S]</span>
+            <span class="text-[10px] font-mono opacity-60 hidden sm:inline">[S]</span>
           </button>
         </div>
 
         <!-- Timer numeric display -->
-        <div id="hud-timer-container" class="flex items-center justify-end gap-1.5 font-mono text-xs font-bold text-slate-300 shrink-0 px-1">
+        <div id="hud-timer-container" class="flex items-center gap-1.5 font-mono text-xs font-bold text-slate-300">
           <svg class="w-3.5 h-3.5 text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -503,30 +501,29 @@
       </div>
 
       <!-- Question Card -->
-      <div class="theme-card rounded-2xl sm:rounded-3xl p-4 sm:p-8 flex flex-col relative">
-        <div class="flex items-center justify-between mb-3 sm:mb-4">
-          <span id="question-category-tag" class="px-2 sm:px-2.5 py-0.5 rounded-md text-[10px] sm:text-[11px] font-mono font-semibold uppercase bg-brand-500/15 text-brand-300 border border-brand-500/25">
+      <div class="theme-card rounded-3xl p-6 sm:p-8 flex flex-col relative">
+        <div class="flex items-center justify-between mb-4">
+          <span id="question-category-tag" class="px-2.5 py-0.5 rounded-md text-[11px] font-mono font-semibold uppercase bg-brand-500/15 text-brand-300 border border-brand-500/25">
             Category
           </span>
-          <span class="text-[10px] sm:text-[11px] font-mono text-slate-400">
-            <span class="hidden sm:inline">Keys [1-4] • [Space / Enter] Advance</span>
-            <span class="inline sm:hidden">Touch option to answer</span>
+          <span class="text-[11px] font-mono text-slate-400">
+            Keys [1-4] or [A-D] • [Space / Enter] Advance
           </span>
         </div>
 
         <!-- Question Prompt -->
-        <h3 id="current-question-text" class="text-sm sm:text-lg md:text-xl font-display font-semibold text-white leading-relaxed mb-4 sm:mb-6">
+        <h3 id="current-question-text" class="text-base sm:text-xl font-display font-semibold text-white leading-snug mb-6">
           Loading Question...
         </h3>
 
         <!-- Options Container -->
-        <div id="options-container" class="grid grid-cols-1 gap-2 sm:gap-2.5 mb-4 sm:mb-6" role="radiogroup">
+        <div id="options-container" class="grid grid-cols-1 gap-2.5 mb-6" role="radiogroup">
           <!-- Populated dynamically via JS -->
         </div>
 
         <!-- Academic Rationale & Explanation Card -->
-        <div id="explanation-box" class="hidden rounded-2xl p-3.5 sm:p-5 theme-subcard mb-4 sm:mb-6 border-l-4 border-l-brand-500 animate-pop">
-          <div class="flex items-start gap-2.5 sm:gap-3">
+        <div id="explanation-box" class="hidden rounded-2xl p-4 sm:p-5 theme-subcard mb-6 border-l-4 border-l-brand-500 animate-pop">
+          <div class="flex items-start gap-3">
             <div id="explanation-icon-wrapper" class="w-6 h-6 rounded-lg bg-brand-500/20 text-brand-300 flex items-center justify-center shrink-0 mt-0.5">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -540,12 +537,12 @@
         </div>
 
         <!-- Bottom Action Bar -->
-        <div class="flex flex-col xs:flex-row items-stretch xs:items-center justify-between gap-3 pt-3 border-t border-white/10">
-          <span id="footer-status-hint" class="text-[11px] sm:text-xs font-medium text-slate-400 text-center xs:text-left">
+        <div class="flex items-center justify-between pt-3 border-t border-white/10">
+          <span id="footer-status-hint" class="text-xs font-medium text-slate-400">
             Select an answer to confirm
           </span>
 
-          <button id="next-action-btn" disabled class="min-h-[44px] px-5 py-2.5 rounded-xl bg-brand-600 disabled:bg-white/10 disabled:text-slate-500 disabled:cursor-not-allowed hover:bg-brand-500 active:scale-98 text-white font-semibold text-xs transition-all inline-flex items-center justify-center gap-2">
+          <button id="next-action-btn" disabled class="px-5 py-2.5 rounded-xl bg-brand-600 disabled:bg-white/10 disabled:text-slate-500 disabled:cursor-not-allowed hover:bg-brand-500 text-white font-semibold text-xs transition-all inline-flex items-center gap-2">
             <span id="next-action-label">Next Question</span>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -556,66 +553,66 @@
     </section>
 
     <!-- ==================== VIEW 3: RESULTS & METRICS ==================== -->
-    <section id="results-view" class="w-full hidden flex-col gap-4 sm:gap-6 animate-pop">
-      <div class="theme-card rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-10 text-center relative overflow-hidden">
-        <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl mb-3 sm:mb-4 bg-brand-500/10 border border-brand-500/20 text-brand-400 shadow-sm mx-auto">
+    <section id="results-view" class="w-full hidden flex-col gap-6 animate-pop">
+      <div class="theme-card rounded-3xl p-6 sm:p-10 text-center relative overflow-hidden">
+        <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl mb-4 bg-brand-500/10 border border-brand-500/20 text-brand-400 shadow-sm mx-auto">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
 
-        <h2 id="results-title" class="text-xl sm:text-2xl md:text-3xl font-display font-bold text-white mb-1.5 sm:mb-2">Session Complete</h2>
-        <p id="results-subtitle" class="text-slate-400 text-xs sm:text-sm max-w-md mx-auto mb-6 sm:mb-8">
+        <h2 id="results-title" class="text-2xl sm:text-3xl font-display font-bold text-white mb-2">Session Complete</h2>
+        <p id="results-subtitle" class="text-slate-400 text-xs sm:text-sm max-w-md mx-auto mb-8">
           Here is your comprehensive performance and concept retention breakdown.
         </p>
 
         <!-- Accuracy Radial Chart -->
-        <div class="flex flex-col items-center justify-center mb-6 sm:mb-8">
-          <div class="relative w-32 h-32 sm:w-36 sm:h-36 flex items-center justify-center">
-            <svg class="w-32 h-32 sm:w-36 sm:h-36 -rotate-90" viewBox="0 0 36 36">
+        <div class="flex flex-col items-center justify-center mb-8">
+          <div class="relative w-36 h-36 flex items-center justify-center">
+            <svg class="w-36 h-36 -rotate-90" viewBox="0 0 36 36">
               <path class="text-white/10" stroke="currentColor" stroke-width="3.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
               <path id="results-radial-circle" class="text-brand-400 transition-all duration-1000 ease-out" stroke="currentColor" stroke-dasharray="100, 100" stroke-dashoffset="100" stroke-linecap="round" stroke-width="3.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
             </svg>
             <div class="absolute flex flex-col items-center">
-              <span id="results-accuracy-pct" class="text-2xl sm:text-3xl font-display font-bold text-white">0%</span>
-              <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 uppercase tracking-wider">Accuracy</span>
+              <span id="results-accuracy-pct" class="text-3xl font-display font-bold text-white">0%</span>
+              <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Accuracy</span>
             </div>
           </div>
         </div>
 
         <!-- Metrics Grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 max-w-2xl mx-auto mb-6 sm:mb-8">
-          <div class="p-3 sm:p-3.5 rounded-2xl theme-subcard">
-            <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 uppercase">Correct Answers</span>
-            <p id="metric-score-fraction" class="text-sm sm:text-base font-display font-bold text-white mt-0.5">0 / 10</p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto mb-8">
+          <div class="p-3.5 rounded-2xl theme-subcard">
+            <span class="text-[10px] font-mono text-slate-400 uppercase">Correct Answers</span>
+            <p id="metric-score-fraction" class="text-base font-display font-bold text-white mt-0.5">0 / 10</p>
           </div>
-          <div class="p-3 sm:p-3.5 rounded-2xl theme-subcard">
-            <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 uppercase">Total Score</span>
-            <p id="metric-points-total" class="text-sm sm:text-base font-display font-bold text-brand-400 mt-0.5">0 pts</p>
+          <div class="p-3.5 rounded-2xl theme-subcard">
+            <span class="text-[10px] font-mono text-slate-400 uppercase">Total Score</span>
+            <p id="metric-points-total" class="text-base font-display font-bold text-brand-400 mt-0.5">0 pts</p>
           </div>
-          <div class="p-3 sm:p-3.5 rounded-2xl theme-subcard">
-            <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 uppercase">Highest Streak</span>
-            <p id="metric-max-streak" class="text-sm sm:text-base font-display font-bold text-brand-300 mt-0.5">0</p>
+          <div class="p-3.5 rounded-2xl theme-subcard">
+            <span class="text-[10px] font-mono text-slate-400 uppercase">Highest Streak</span>
+            <p id="metric-max-streak" class="text-base font-display font-bold text-brand-300 mt-0.5">0</p>
           </div>
-          <div class="p-3 sm:p-3.5 rounded-2xl theme-subcard">
-            <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 uppercase">Avg Speed</span>
-            <p id="metric-avg-speed" class="text-sm sm:text-base font-display font-bold text-slate-300 mt-0.5">0.0s</p>
+          <div class="p-3.5 rounded-2xl theme-subcard">
+            <span class="text-[10px] font-mono text-slate-400 uppercase">Avg Response Time</span>
+            <p id="metric-avg-speed" class="text-base font-display font-bold text-slate-300 mt-0.5">0.0s</p>
           </div>
         </div>
 
         <!-- Actions -->
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2.5 sm:gap-3">
-          <button id="replay-same-btn" class="min-h-[44px] px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 active:scale-98 text-white font-semibold text-xs transition-all flex items-center justify-center gap-2">
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <button id="replay-same-btn" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-semibold text-xs transition-all flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
             <span>Retake Session</span>
           </button>
 
-          <button id="share-scorecard-btn" class="min-h-[44px] px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 active:scale-98 border border-white/10 text-white font-semibold text-xs transition-all flex items-center justify-center gap-2">
+          <button id="share-scorecard-btn" class="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-semibold text-xs transition-all flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
             <span>Copy Summary</span>
           </button>
 
-          <button id="configure-new-btn" class="min-h-[44px] px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 active:scale-98 border border-white/10 text-slate-300 hover:text-white font-semibold text-xs transition-all flex items-center justify-center gap-2">
+          <button id="configure-new-btn" class="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white font-semibold text-xs transition-all flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12" /></svg>
             <span>Back to Settings</span>
           </button>
@@ -623,21 +620,21 @@
       </div>
 
       <!-- Itemized Log -->
-      <div class="theme-card rounded-2xl sm:rounded-3xl p-4 sm:p-8">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6 pb-3 sm:pb-4 border-b border-white/10">
+      <div class="theme-card rounded-3xl p-6 sm:p-8">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/10">
           <div>
-            <h3 class="text-sm sm:text-base font-display font-bold text-white">Itemized Answer Log</h3>
-            <p class="text-[11px] sm:text-xs text-slate-400">Review mistakes and verify explanations for reinforced learning.</p>
+            <h3 class="text-base font-display font-bold text-white">Itemized Answer Log</h3>
+            <p class="text-xs text-slate-400">Review mistakes and verify explanations for reinforced learning.</p>
           </div>
 
-          <div class="inline-flex p-1 bg-white/5 rounded-xl border border-white/10 text-xs font-mono self-start sm:self-auto" id="review-filter-container">
-            <button class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-brand-600 text-white font-semibold" data-filter="all">All (<span id="count-all">0</span>)</button>
-            <button class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-slate-400 hover:text-white" data-filter="correct">Correct (<span id="count-correct">0</span>)</button>
-            <button class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-slate-400 hover:text-white" data-filter="wrong">Missed (<span id="count-wrong">0</span>)</button>
+          <div class="inline-flex p-1 bg-white/5 rounded-xl border border-white/10 text-xs font-mono" id="review-filter-container">
+            <button class="px-3 py-1.5 rounded-lg bg-brand-600 text-white font-semibold" data-filter="all">All (<span id="count-all">0</span>)</button>
+            <button class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white" data-filter="correct">Correct (<span id="count-correct">0</span>)</button>
+            <button class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white" data-filter="wrong">Missed (<span id="count-wrong">0</span>)</button>
           </div>
         </div>
 
-        <div id="review-cards-list" class="flex flex-col gap-2.5 sm:gap-3">
+        <div id="review-cards-list" class="flex flex-col gap-3">
           <!-- Rendered dynamically -->
         </div>
       </div>
@@ -646,35 +643,35 @@
   </main>
 
   <!-- ==================== MODAL: PDF REVIEWER & DECK GENERATOR ==================== -->
-  <div id="pdf-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="theme-card max-w-3xl w-full rounded-t-3xl sm:rounded-3xl p-4 sm:p-8 max-h-[92vh] flex flex-col animate-pop">
-      <div class="flex items-center justify-between mb-3 sm:mb-4 pb-2 sm:pb-3 border-b border-white/10">
-        <div class="flex items-center gap-2 sm:gap-2.5">
-          <div class="w-8 h-8 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center shrink-0">
+  <div id="pdf-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm items-center justify-center p-4">
+    <div class="theme-card max-w-3xl w-full rounded-3xl p-6 sm:p-8 max-h-[90vh] flex flex-col animate-pop">
+      <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </div>
           <div>
-            <h3 class="font-display font-bold text-sm sm:text-base text-white">PDF Reviewer</h3>
-            <p class="text-[11px] sm:text-xs text-slate-400">Import textbooks or notes into an interactive deck.</p>
+            <h3 class="font-display font-bold text-base text-white">PDF Document Reviewer</h3>
+            <p class="text-xs text-slate-400">Import textbooks, lecture slides, or lecture summaries into an interactive study deck.</p>
           </div>
         </div>
-        <button id="close-pdf-btn" class="min-h-[40px] min-w-[40px] p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 active:scale-95 flex items-center justify-center">
+        <button id="close-pdf-btn" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
       </div>
 
       <!-- Drag & Drop Upload Zone -->
-      <div id="pdf-drop-zone" class="p-5 sm:p-6 rounded-2xl border-2 border-dashed border-white/20 hover:border-brand-500/60 bg-white/5 text-center cursor-pointer transition-colors mb-3 sm:mb-4 active:scale-[0.99]">
-        <input type="file" id="pdf-file-input" accept=".pdf,application/pdf" class="hidden">
-        <div class="w-10 h-10 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center mx-auto mb-2 border border-brand-500/20">
+      <div id="pdf-drop-zone" class="p-6 rounded-2xl border-2 border-dashed border-white/20 hover:border-brand-500/60 bg-white/5 text-center cursor-pointer transition-colors mb-4">
+        <input type="file" id="pdf-file-input" accept=".pdf" class="hidden">
+        <div class="w-10 h-10 rounded-2xl bg-brand-500/10 text-brand-400 flex items-center justify-center mx-auto mb-2.5 border border-brand-500/20">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
           </svg>
         </div>
-        <h4 class="text-xs sm:text-sm font-semibold text-white mb-1">Tap to browse or drop PDF here</h4>
-        <p class="text-[11px] text-slate-400">Extracted securely inside your device browser.</p>
+        <h4 class="text-sm font-semibold text-white mb-1">Click to browse or drop your PDF here</h4>
+        <p class="text-xs text-slate-400">Extracted securely inside your browser. No files are uploaded to any external server.</p>
       </div>
 
       <!-- PDF Extraction Loading State -->
@@ -684,33 +681,33 @@
       </div>
 
       <!-- Reviewer Content Output View -->
-      <div id="pdf-results-container" class="hidden flex-1 overflow-y-auto pr-1 flex-col gap-3 sm:gap-4 overscroll-contain">
+      <div id="pdf-results-container" class="hidden flex-1 overflow-y-auto pr-1 flex-col gap-4">
         <!-- Summary Stat Bar -->
-        <div class="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-2 p-3 rounded-xl bg-white/5 border border-white/10 text-xs">
-          <div class="flex items-center gap-3 text-slate-300 font-mono text-[11px] sm:text-xs">
+        <div class="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 text-xs">
+          <div class="flex items-center gap-4 text-slate-300 font-mono">
             <span>Pages: <strong id="pdf-stat-pages" class="text-white">0</strong></span>
-            <span>Terms: <strong id="pdf-stat-concepts" class="text-brand-400">0</strong></span>
-            <span>Qs: <strong id="pdf-stat-questions" class="text-brand-300">0</strong></span>
+            <span>Concepts: <strong id="pdf-stat-concepts" class="text-brand-400">0</strong></span>
+            <span>Generated Qs: <strong id="pdf-stat-questions" class="text-brand-300">0</strong></span>
           </div>
-          <button id="launch-pdf-quiz-btn" class="w-full xs:w-auto min-h-[38px] px-3.5 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 active:scale-95 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all">
+          <button id="launch-pdf-quiz-btn" class="px-3.5 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all">
             <span>Take PDF Quiz Now</span>
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
           </button>
         </div>
 
-        <!-- Navigation Tabs -->
+        <!-- Navigation Tabs: Flashcards Reviewer vs Generated Questions -->
         <div class="flex items-center gap-2 border-b border-white/10 pb-2">
-          <button id="tab-reviewer-notes" class="px-2.5 sm:px-3 py-1 rounded-lg bg-brand-500/20 text-brand-300 font-mono text-[11px] sm:text-xs font-semibold">Key Concepts</button>
-          <button id="tab-reviewer-questions" class="px-2.5 sm:px-3 py-1 rounded-lg text-slate-400 hover:text-white font-mono text-[11px] sm:text-xs font-semibold">Generated Quiz</button>
+          <button id="tab-reviewer-notes" class="px-3 py-1 rounded-lg bg-brand-500/20 text-brand-300 font-mono text-xs font-semibold">Key Concepts Cheatsheet</button>
+          <button id="tab-reviewer-questions" class="px-3 py-1 rounded-lg text-slate-400 hover:text-white font-mono text-xs font-semibold">Generated Quiz Questions</button>
         </div>
 
         <!-- Notes / Flashcards List -->
-        <div id="pdf-notes-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+        <div id="pdf-notes-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <!-- Populated by JS -->
         </div>
 
         <!-- Questions Preview List -->
-        <div id="pdf-questions-list" class="hidden flex-col gap-2.5 sm:gap-3">
+        <div id="pdf-questions-list" class="hidden flex-col gap-3">
           <!-- Populated by JS -->
         </div>
       </div>
@@ -718,56 +715,56 @@
   </div>
 
   <!-- ==================== MODAL: CUSTOM DECK BUILDER ==================== -->
-  <div id="builder-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="theme-card max-w-2xl w-full rounded-t-3xl sm:rounded-3xl p-4 sm:p-8 max-h-[92vh] flex flex-col animate-pop">
-      <div class="flex items-center justify-between mb-3 sm:mb-4 pb-2 sm:pb-3 border-b border-white/10">
+  <div id="builder-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm items-center justify-center p-4">
+    <div class="theme-card max-w-2xl w-full rounded-3xl p-6 sm:p-8 max-h-[90vh] flex flex-col animate-pop">
+      <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
         <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center shrink-0">
+          <div class="w-8 h-8 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             </svg>
           </div>
           <div>
-            <h3 class="font-display font-bold text-sm sm:text-base text-white">Manual Deck Editor</h3>
-            <p class="text-[11px] sm:text-xs text-slate-400">Create or import custom question banks.</p>
+            <h3 class="font-display font-bold text-base text-white">Manual Deck Editor</h3>
+            <p class="text-xs text-slate-400">Create, export, or import custom JSON question banks.</p>
           </div>
         </div>
-        <button id="close-builder-btn" class="min-h-[40px] min-w-[40px] p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 active:scale-95 flex items-center justify-center">
+        <button id="close-builder-btn" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
       </div>
 
-      <div class="flex-1 overflow-y-auto pr-1 space-y-3 sm:space-y-4 text-xs sm:text-sm overscroll-contain">
-        <div class="p-3.5 sm:p-4 rounded-2xl theme-subcard space-y-2.5 sm:space-y-3">
+      <div class="flex-1 overflow-y-auto pr-1 space-y-4 text-xs sm:text-sm">
+        <div class="p-4 rounded-2xl theme-subcard space-y-3">
           <h4 class="font-mono font-semibold uppercase text-brand-300 text-xs">Add Single Question</h4>
           <div>
             <label class="block text-slate-400 text-xs mb-1">Question Prompt</label>
-            <input type="text" id="builder-q-text" placeholder="e.g., What is the default port for HTTPS?" class="w-full min-h-[44px] p-2.5 rounded-xl bg-black/40 border border-white/15 text-white outline-none focus:border-brand-500">
+            <input type="text" id="builder-q-text" placeholder="e.g., What is the default port for HTTPS?" class="w-full p-2.5 rounded-xl bg-black/40 border border-white/15 text-white outline-none focus:border-brand-500">
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
               <label class="block text-slate-400 text-xs mb-1">Option A</label>
-              <input type="text" id="builder-opt-0" placeholder="Option A" class="w-full min-h-[44px] p-2 rounded-xl bg-black/40 border border-white/15 text-white outline-none">
+              <input type="text" id="builder-opt-0" placeholder="Option A" class="w-full p-2 rounded-xl bg-black/40 border border-white/15 text-white outline-none">
             </div>
             <div>
               <label class="block text-slate-400 text-xs mb-1">Option B</label>
-              <input type="text" id="builder-opt-1" placeholder="Option B" class="w-full min-h-[44px] p-2 rounded-xl bg-black/40 border border-white/15 text-white outline-none">
+              <input type="text" id="builder-opt-1" placeholder="Option B" class="w-full p-2 rounded-xl bg-black/40 border border-white/15 text-white outline-none">
             </div>
             <div>
               <label class="block text-slate-400 text-xs mb-1">Option C</label>
-              <input type="text" id="builder-opt-2" placeholder="Option C" class="w-full min-h-[44px] p-2 rounded-xl bg-black/40 border border-white/15 text-white outline-none">
+              <input type="text" id="builder-opt-2" placeholder="Option C" class="w-full p-2 rounded-xl bg-black/40 border border-white/15 text-white outline-none">
             </div>
             <div>
               <label class="block text-slate-400 text-xs mb-1">Option D</label>
-              <input type="text" id="builder-opt-3" placeholder="Option D" class="w-full min-h-[44px] p-2 rounded-xl bg-black/40 border border-white/15 text-white outline-none">
+              <input type="text" id="builder-opt-3" placeholder="Option D" class="w-full p-2 rounded-xl bg-black/40 border border-white/15 text-white outline-none">
             </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
               <label class="block text-slate-400 text-xs mb-1">Correct Answer</label>
-              <select id="builder-correct-idx" class="w-full min-h-[44px] p-2 rounded-xl bg-black/40 border border-white/15 text-white outline-none">
+              <select id="builder-correct-idx" class="w-full p-2 rounded-xl bg-black/40 border border-white/15 text-white outline-none">
                 <option value="0">Option A</option>
                 <option value="1">Option B</option>
                 <option value="2">Option C</option>
@@ -776,27 +773,27 @@
             </div>
             <div>
               <label class="block text-slate-400 text-xs mb-1">Category / Domain</label>
-              <input type="text" id="builder-category" placeholder="Custom Topic" class="w-full min-h-[44px] p-2 rounded-xl bg-black/40 border border-white/15 text-white outline-none">
+              <input type="text" id="builder-category" placeholder="Custom Topic" class="w-full p-2 rounded-xl bg-black/40 border border-white/15 text-white outline-none">
             </div>
           </div>
 
           <div>
             <label class="block text-slate-400 text-xs mb-1">Concept Rationale / Explanation</label>
-            <input type="text" id="builder-explanation" placeholder="Why this option is correct..." class="w-full min-h-[44px] p-2.5 rounded-xl bg-black/40 border border-white/15 text-white outline-none">
+            <input type="text" id="builder-explanation" placeholder="Why this option is correct..." class="w-full p-2.5 rounded-xl bg-black/40 border border-white/15 text-white outline-none">
           </div>
 
-          <button id="builder-add-q-btn" class="w-full min-h-[44px] py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 active:scale-98 font-semibold text-white text-xs transition-all">
+          <button id="builder-add-q-btn" class="w-full py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 font-semibold text-white text-xs">
             Save Question to Local Deck
           </button>
         </div>
 
-        <div class="p-3.5 sm:p-4 rounded-2xl theme-subcard space-y-2">
+        <div class="p-4 rounded-2xl theme-subcard space-y-2">
           <div class="flex items-center justify-between">
             <h4 class="font-mono font-semibold uppercase text-brand-300 text-xs">Deck JSON</h4>
-            <div class="flex gap-1.5 sm:gap-2">
-              <button id="builder-export-btn" class="min-h-[34px] px-2.5 py-1 rounded-lg bg-white/10 active:scale-95 text-xs font-mono">Copy</button>
-              <button id="builder-import-btn" class="min-h-[34px] px-2.5 py-1 rounded-lg bg-white/10 active:scale-95 text-xs font-mono text-brand-400">Import</button>
-              <button id="builder-clear-btn" class="min-h-[34px] px-2.5 py-1 rounded-lg bg-rose-500/20 active:scale-95 text-rose-300 text-xs font-mono">Clear</button>
+            <div class="flex gap-2">
+              <button id="builder-export-btn" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-mono">Copy</button>
+              <button id="builder-import-btn" class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-mono text-brand-400">Import</button>
+              <button id="builder-clear-btn" class="px-2.5 py-1 rounded-lg bg-rose-500/20 text-rose-300 text-xs font-mono">Clear</button>
             </div>
           </div>
           <textarea id="builder-json-area" rows="3" class="w-full p-2.5 rounded-xl bg-black/40 border border-white/15 font-mono text-xs text-slate-300 outline-none" placeholder="Paste question array JSON..."></textarea>
@@ -807,26 +804,26 @@
   </div>
 
   <!-- ==================== MODAL: ACHIEVEMENTS ==================== -->
-  <div id="achievements-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="theme-card max-w-lg w-full rounded-t-3xl sm:rounded-3xl p-4 sm:p-8 max-h-[92vh] flex flex-col animate-pop">
-      <div class="flex items-center justify-between mb-3 sm:mb-4 pb-2 sm:pb-3 border-b border-white/10">
+  <div id="achievements-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm items-center justify-center p-4">
+    <div class="theme-card max-w-lg w-full rounded-3xl p-6 sm:p-8 max-h-[90vh] flex flex-col animate-pop">
+      <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
         <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center shrink-0">
+          <div class="w-8 h-8 rounded-xl bg-brand-500/20 text-brand-400 flex items-center justify-center">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
             </svg>
           </div>
           <div>
-            <h3 class="font-display font-bold text-sm sm:text-base text-white">Milestones &amp; Badges</h3>
-            <p class="text-[11px] sm:text-xs text-slate-400">Track subject mastery and accuracy achievements.</p>
+            <h3 class="font-display font-bold text-base text-white">Milestones &amp; Badges</h3>
+            <p class="text-xs text-slate-400">Track subject mastery and accuracy achievements.</p>
           </div>
         </div>
-        <button id="close-achievements-btn" class="min-h-[40px] min-w-[40px] p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 active:scale-95 flex items-center justify-center">
+        <button id="close-achievements-btn" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
       </div>
 
-      <div id="achievements-list-container" class="flex-1 overflow-y-auto pr-1 space-y-2 sm:space-y-2.5 overscroll-contain">
+      <div id="achievements-list-container" class="flex-1 overflow-y-auto pr-1 space-y-2.5">
         <!-- Dynamically rendered badge items -->
       </div>
     </div>
@@ -977,7 +974,7 @@
       }
     ];
 
-    // Synthesizer Audio Engine with Mobile / iOS AudioContext Unlocking
+    // Synthesizer Audio Engine
     const AudioEngine = (() => {
       let audioCtx = null;
       let soundEnabled = true;
@@ -994,12 +991,6 @@
       }
 
       return {
-        unlock() {
-          const ctx = getCtx();
-          if (ctx && ctx.state === 'suspended') {
-            ctx.resume();
-          }
-        },
         toggleSound(enable) {
           soundEnabled = enable;
           return soundEnabled;
@@ -1115,16 +1106,16 @@
       window.addEventListener('resize', resize);
       resize();
 
-      function spawn(count = 70) {
+      function spawn(count = 90) {
         const palette = ['#16a34a', '#22c55e', '#4ade80', '#86efac', '#dcfce7'];
         particles = [];
         for (let i = 0; i < count; i++) {
           particles.push({
             x: canvas.width / 2,
             y: canvas.height * 0.45,
-            vx: (Math.random() - 0.5) * 14,
-            vy: (Math.random() - 0.8) * 14,
-            size: Math.random() * 5 + 3,
+            vx: (Math.random() - 0.5) * 16,
+            vy: (Math.random() - 0.8) * 16,
+            size: Math.random() * 6 + 3,
             color: palette[Math.floor(Math.random() * palette.length)],
             rotation: Math.random() * 360,
             rotSpeed: (Math.random() - 0.5) * 12,
@@ -1147,7 +1138,7 @@
           p.x += p.vx;
           p.y += p.vy;
           p.rotation += p.rotSpeed;
-          p.opacity -= 0.012;
+          p.opacity -= 0.01;
           if (p.opacity > 0) {
             living++;
             ctx.save();
@@ -1170,7 +1161,7 @@
       return {
         burst() {
           cancelAnimationFrame(frameId);
-          spawn(75);
+          spawn(100);
           loop();
         }
       };
@@ -1194,7 +1185,7 @@
 
         setTimeout(() => {
           toast.style.opacity = '0';
-          toast.style.transform = 'translateY(-8px)';
+          toast.style.transform = 'translateY(8px)';
           toast.style.transition = 'all 0.25s ease';
           setTimeout(() => toast.remove(), 250);
         }, duration);
@@ -1244,7 +1235,7 @@
         const concepts = [];
         const questions = [];
 
-        sentences.forEach((sentence) => {
+        sentences.forEach((sentence, idx) => {
           const match = sentence.match(/^([A-Z][A-Za-z0-9\s\-]{2,35})\s+(?:is defined as|refers to|is an|is a|are|means|consists of)\s+(.+)/i);
           if (match && concepts.length < 30) {
             const term = match[1].trim();
@@ -1660,17 +1651,17 @@
       } else if (ArenaState.mode === 'blitz') {
         DOM.hudProgressCounter.textContent = `Answered: ${index}`;
       } else {
-        DOM.hudProgressCounter.textContent = `Q ${index + 1} of ${total}`;
+        DOM.hudProgressCounter.textContent = `Question ${index + 1} of ${total}`;
       }
 
       DOM.questionCategoryTag.textContent = q.category;
       DOM.currentQuestionText.textContent = q.question;
 
       DOM.nextActionBtn.disabled = true;
-      DOM.nextActionLabel.textContent = (ArenaState.mode === 'classic' && index === total - 1) ? 'Finish & Summary' : 'Next Question';
+      DOM.nextActionLabel.textContent = (ArenaState.mode === 'classic' && index === total - 1) ? 'Finish & View Summary' : 'Next Question';
       DOM.explanationBox.classList.add('hidden');
       DOM.footerStatusHint.textContent = 'Select an option above to confirm your answer';
-      DOM.footerStatusHint.className = 'text-[11px] sm:text-xs font-medium text-slate-400 text-center xs:text-left';
+      DOM.footerStatusHint.className = 'text-xs font-medium text-slate-400';
 
       DOM.optionsContainer.innerHTML = '';
       const letters = ['A', 'B', 'C', 'D'];
@@ -1679,16 +1670,16 @@
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.dataset.idx = optIdx;
-        btn.className = 'option-btn w-full min-h-[48px] text-left p-3 sm:p-3.5 rounded-2xl theme-subcard hover:border-brand-400 flex items-center justify-between group focus:outline-none focus:ring-2 focus:ring-brand-500 select-none';
+        btn.className = 'option-btn w-full text-left p-3.5 rounded-2xl theme-subcard hover:border-brand-400 flex items-center justify-between group focus:outline-none focus:ring-2 focus:ring-brand-500';
         btn.innerHTML = `
-          <div class="flex items-center gap-2.5 sm:gap-3 pr-2">
-            <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-white/10 group-hover:bg-brand-500 group-hover:text-white font-mono font-semibold text-xs flex items-center justify-center shrink-0 border border-white/10 transition-colors">
+          <div class="flex items-center gap-3 pr-2">
+            <span class="w-7 h-7 rounded-lg bg-white/10 group-hover:bg-brand-500 group-hover:text-white font-mono font-semibold text-xs flex items-center justify-center shrink-0 border border-white/10 transition-colors">
               ${letters[optIdx]}
             </span>
             <span class="text-xs sm:text-sm font-medium text-white leading-relaxed">${optText}</span>
           </div>
           <div class="indicator-slot flex items-center justify-center shrink-0 ml-2">
-            <span class="text-[9px] sm:text-[10px] font-mono text-slate-400 group-hover:text-slate-200 px-1.5 py-0.5 rounded bg-white/5 border border-white/10 hidden sm:inline">[${optIdx + 1}]</span>
+            <span class="text-[10px] font-mono text-slate-400 group-hover:text-slate-200 px-1.5 py-0.5 rounded bg-white/5 border border-white/10">[${optIdx + 1}]</span>
           </div>
         `;
 
@@ -1768,7 +1759,7 @@
 
       if (ArenaState.mode === 'survival' && !isCorrect) {
         DOM.footerStatusHint.textContent = 'Sudden Death: Incorrect answer submitted.';
-        DOM.footerStatusHint.className = 'text-xs font-semibold text-rose-400 text-center xs:text-left';
+        DOM.footerStatusHint.className = 'text-xs font-semibold text-rose-400';
         DOM.nextActionLabel.textContent = 'View Final Results';
         DOM.nextActionBtn.disabled = false;
         return;
@@ -1801,11 +1792,11 @@
 
       if (ArenaState.mode === 'survival') {
         DOM.footerStatusHint.textContent = "Timer expired in Sudden Death mode.";
-        DOM.footerStatusHint.className = 'text-xs font-semibold text-rose-400 text-center xs:text-left';
+        DOM.footerStatusHint.className = 'text-xs font-semibold text-rose-400';
         DOM.nextActionLabel.textContent = 'View Final Results';
       } else {
         DOM.footerStatusHint.textContent = "Time expired for this question.";
-        DOM.footerStatusHint.className = 'text-xs font-semibold text-rose-400 text-center xs:text-left';
+        DOM.footerStatusHint.className = 'text-xs font-semibold text-rose-400';
       }
 
       DOM.nextActionBtn.disabled = false;
@@ -1953,7 +1944,7 @@
       }, 150);
 
       if (accuracyPct >= 80) {
-        DOM.resultsTitle.textContent = 'High Proficiency';
+        DOM.resultsTitle.textContent = 'High Proficiency Demonstrated';
         DOM.resultsSubtitle.textContent = 'Consistent command of fundamental terminology and rapid reasoning.';
         ConfettiSystem.burst();
       } else if (accuracyPct >= 60) {
@@ -1995,7 +1986,7 @@
         const correctText = q.options[q.correctAnswer];
 
         const card = document.createElement('div');
-        card.className = `p-3 sm:p-3.5 rounded-2xl border flex flex-col gap-2 ${
+        card.className = `p-3.5 rounded-2xl border flex flex-col gap-2 ${
           item.isCorrect ? 'bg-brand-500/10 border-brand-500/30' : 'bg-rose-500/10 border-rose-500/30'
         }`;
 
@@ -2110,7 +2101,7 @@ Max Streak: ${ArenaState.maxStreak} | Total Points: ${ArenaState.totalPoints} pt
 
       ArenaState.activeDeck = pool;
       DOM.activeModeBadge.textContent = ArenaState.mode.toUpperCase();
-      DOM.hudModeSubtext.textContent = `${ArenaState.mode.toUpperCase()}`;
+      DOM.hudModeSubtext.textContent = `${ArenaState.mode.toUpperCase()} EVALUATION`;
 
       DOM.startView.classList.add('hidden');
       DOM.resultsView.classList.add('hidden');
@@ -2126,11 +2117,6 @@ Max Streak: ${ArenaState.maxStreak} | Total Points: ${ArenaState.totalPoints} pt
     }
 
     function setupEventListeners() {
-      // Audio unlocking for iOS/iPadOS Safari touch interactions
-      ['click', 'touchstart', 'pointerdown'].forEach(evt => {
-        window.addEventListener(evt, () => AudioEngine.unlock(), { once: true, passive: true });
-      });
-
       // Mode selector
       document.querySelectorAll('.mode-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -2419,10 +2405,10 @@ Max Streak: ${ArenaState.maxStreak} | Total Points: ${ArenaState.totalPoints} pt
         }
       });
 
-      // Keyboard Controls for Hardware Keyboards (e.g. iPad Magic Keyboard)
+      // Keyboard Controls
       window.addEventListener('keydown', (e) => {
         if (DOM.quizView.classList.contains('hidden')) return;
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
         if (e.key === ' ' || e.key === 'Spacebar') e.preventDefault();
 
         if (!ArenaState.isAnswerLocked) {
